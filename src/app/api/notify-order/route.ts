@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 interface OrderItem {
   dishName: string;
   quantity: number;
@@ -28,10 +26,12 @@ export async function POST(req: NextRequest) {
     };
 
     const restaurantEmail = process.env.RESTAURANT_NOTIFICATION_EMAIL;
-    if (!restaurantEmail) {
-      // Silently skip if no email configured (dev mode)
+    if (!restaurantEmail || !process.env.RESEND_API_KEY) {
+      // Silently skip if not configured (dev / CI)
       return NextResponse.json({ ok: true });
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     const itemsHtml = items
       .map(
