@@ -6,7 +6,7 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { UtensilsCrossed, ClipboardList, ExternalLink, ArrowRight, Bell, BellOff } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { requestPushPermission } from "@/components/providers/pwa-provider";
 import { toast } from "sonner";
 
