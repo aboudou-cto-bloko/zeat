@@ -497,11 +497,11 @@ export default function SettingsPage() {
 
                 {/* Tips */}
                 <div className="space-y-2 text-micro text-muted-gray">
-                  <p className="font-semibold text-uber-black">Conseils d'impression</p>
+                  <p className="font-semibold text-uber-black">Conseils d&apos;impression</p>
                   <ul className="space-y-1 list-disc list-inside">
                     <li>Taille minimum : <strong className="text-uber-black">3 × 3 cm</strong> pour une lecture fiable</li>
                     <li>Fond blanc, encre noire — évitez les couleurs sur le QR</li>
-                    <li>Testez le scan avant d'imprimer en masse</li>
+                    <li>Testez le scan avant d&apos;imprimer en masse</li>
                     <li>Idéal sur support A6, flyer ou sticker de table</li>
                   </ul>
                 </div>
@@ -599,7 +599,7 @@ export default function SettingsPage() {
                 <p className="text-caption font-semibold text-destructive mb-1">Êtes-vous absolument certain ?</p>
                 <p className="text-micro text-muted-gray">
                   Cette action supprimera <strong>définitivement</strong> votre compte et toutes vos données.
-                  Il n'y a aucun moyen d'annuler cela.
+                  Il n&apos;y a aucun moyen d&apos;annuler cela.
                 </p>
               </div>
               <div className="flex gap-2">

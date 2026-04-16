@@ -28,8 +28,13 @@ export default function DashboardPage() {
   const [notifStatus, setNotifStatus] = useState<"unknown" | "granted" | "denied" | "unsupported">("unknown");
 
   useEffect(() => {
-    if (!("Notification" in window)) { setNotifStatus("unsupported"); return; }
-    setNotifStatus(Notification.permission as "granted" | "denied" | "default" === "granted" ? "granted" : Notification.permission === "denied" ? "denied" : "unknown");
+    if (!("Notification" in window)) {
+      setNotifStatus("unsupported");
+      return;
+    }
+    const perm = Notification.permission;
+    const next = perm === "granted" ? "granted" : perm === "denied" ? "denied" : "unknown";
+    setNotifStatus(next);
   }, []);
 
   async function handleEnableNotifications() {
