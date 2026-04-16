@@ -163,12 +163,11 @@ chore: update motion to 12.x
 
 ## CI / checks requis
 
-Tout PR doit passer les deux jobs GitHub Actions avant d'être mergeable :
+Tout PR doit passer le job GitHub Actions avant d'être mergeable :
 
 | Job | Commandes |
 |---|---|
 | **Type-check & Lint** | `pnpm tsc --noEmit` + `pnpm lint` |
-| **Build** | `pnpm build` |
 
 Le merge est en **squash uniquement** — l'historique de `master` est linéaire.
 
