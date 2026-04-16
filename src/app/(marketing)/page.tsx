@@ -165,86 +165,41 @@ export default async function LandingPage() {
             </p>
           </div>
 
-          {/* Right: CSS mockup of the storefront */}
+          {/* Right: iPhone 15 with real app screenshot */}
           <div
             className="relative flex justify-center lg:justify-end"
             aria-hidden="true"
           >
-            <div className="relative w-[280px] sm:w-[300px]">
-              {/* Phone shell */}
-              <div className="relative rounded-[2.5rem] border-[3px] border-uber-black/10 bg-pure-white shadow-[0_32px_64px_rgba(0,0,0,0.14)] overflow-hidden">
-                {/* Fake status bar */}
-                <div className="flex items-center justify-between px-5 py-3 bg-uber-black">
-                  <span className="text-[10px] text-white/70 font-medium">
-                    9:41
-                  </span>
-                  <div className="flex gap-1">
-                    <div className="h-1.5 w-3 rounded-full bg-white/60" />
-                    <div className="h-1.5 w-3 rounded-full bg-white/60" />
-                  </div>
-                </div>
-                {/* Banner placeholder */}
-                <div className="h-24 bg-gradient-to-br from-[#2d4a3e] to-[#1a1a1a] relative flex items-end px-4 pb-3">
-                  <div className="h-10 w-10 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center">
-                    <span className="text-white font-heading font-bold text-sm">
-                      R
-                    </span>
-                  </div>
-                  <div className="ml-3">
-                    <div className="h-3 w-24 rounded-full bg-white/80 mb-1.5" />
-                    <div className="h-2 w-16 rounded-full bg-white/40" />
-                  </div>
-                </div>
-                {/* Category chip */}
-                <div className="px-3 py-3 flex gap-2">
-                  <div className="h-7 w-16 rounded-full bg-uber-black" />
-                  <div className="h-7 w-14 rounded-full bg-chip-gray" />
-                  <div className="h-7 w-16 rounded-full bg-chip-gray" />
-                </div>
-                {/* Dish cards */}
-                <div className="px-3 pb-4 space-y-2">
-                  {[
-                    { w: "w-28", p: "w-12" },
-                    { w: "w-20", p: "w-10" },
-                    { w: "w-24", p: "w-11" },
-                  ].map((d, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 rounded-xl bg-chip-gray/60 p-3"
-                    >
-                      <div className="h-10 w-10 rounded-lg bg-hover-gray shrink-0" />
-                      <div className="flex-1 space-y-1.5">
-                        <div
-                          className={`h-2.5 ${d.w} rounded-full bg-uber-black/20`}
-                        />
-                        <div
-                          className={`h-2 ${d.p} rounded-full bg-uber-black/10`}
-                        />
-                      </div>
-                      <div className="h-6 w-6 rounded-full bg-uber-black flex items-center justify-center shrink-0">
-                        <span className="text-white text-[10px] font-bold">
-                          +
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {/* Cart CTA */}
-                <div className="px-3 pb-5">
-                  <div className="h-11 rounded-full bg-uber-black flex items-center justify-between px-4">
-                    <span className="text-white text-[11px] font-bold">
-                      Voir le panier
-                    </span>
-                    <span className="text-white/70 text-[10px]">
-                      2 750 FCFA
-                    </span>
-                  </div>
+            <div className="relative">
+              {/* Side buttons — left (mute + volume) */}
+              <div className="absolute left-[-3px] top-[88px] w-[3px] h-[28px] rounded-l-sm bg-[#3a3a3c]" />
+              <div className="absolute left-[-3px] top-[128px] w-[3px] h-[52px] rounded-l-sm bg-[#3a3a3c]" />
+              <div className="absolute left-[-3px] top-[190px] w-[3px] h-[52px] rounded-l-sm bg-[#3a3a3c]" />
+              {/* Side button — right (power) */}
+              <div className="absolute right-[-3px] top-[140px] w-[3px] h-[68px] rounded-r-sm bg-[#3a3a3c]" />
+
+              {/* iPhone shell — black titanium */}
+              <div className="relative w-[270px] sm:w-[290px] rounded-[52px] bg-[#1c1c1e] p-[3px] shadow-[0_40px_80px_rgba(0,0,0,0.30),0_0_0_1px_rgba(255,255,255,0.06),inset_0_0_0_1px_rgba(255,255,255,0.04)]">
+                {/* Inner screen bezel */}
+                <div className="relative rounded-[50px] overflow-hidden bg-black">
+                  {/* Dynamic Island */}
+                  <div className="absolute top-[10px] left-1/2 -translate-x-1/2 z-10 w-[88px] h-[28px] bg-black rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.06)]" />
+
+                  {/* Real app screenshot */}
+                  <Image
+                    src="/app-screenshot.png"
+                    alt="Interface Zeat — menu Chez Fatou"
+                    width={290}
+                    height={628}
+                    className="w-full object-cover object-top"
+                    priority
+                  />
                 </div>
               </div>
 
               {/* Floating notification badge */}
-              <div className="absolute -top-4 -right-4 rounded-2xl bg-pure-white shadow-[var(--shadow-float)] border border-border px-3 py-2 flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-uber-black">
+              <div className="absolute -top-4 -right-5 rounded-2xl bg-pure-white shadow-[var(--shadow-float)] border border-border px-3 py-2 flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-uber-black shrink-0">
                   <BellRing size={12} className="text-white" />
                 </div>
                 <div>
