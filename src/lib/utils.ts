@@ -1,5 +1,24 @@
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+
+// Tell twMerge that Zeat's custom typography scale classes are font-size
+// utilities, not text-color utilities — otherwise twMerge drops `text-white`
+// when it sees e.g. `text-caption` or `text-body` appear after it.
+const twMerge = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      "font-size": [
+        "text-display",
+        "text-headline-lg",
+        "text-headline-md",
+        "text-headline-sm",
+        "text-body",
+        "text-caption",
+        "text-micro",
+      ],
+    },
+  },
+});
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
