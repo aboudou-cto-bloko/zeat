@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useConvexAuth, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
@@ -88,20 +88,21 @@ export default function SignupPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [pendingSetup, setPendingSetup] = useState<{ name: string; slug: string } | null>(null);
+  const pendingSetup = useRef<{ name: string; slug: string } | null>(null);
 
   // Run restaurant creation only once the Convex client confirms auth is ready
   useEffect(() => {
-    if (!isAuthenticated || !pendingSetup) return;
-    setPendingSetup(null);
-    createRestaurant(pendingSetup)
+    if (!isAuthenticated || !pendingSetup.current) return;
+    const setup = pendingSetup.current;
+    pendingSetup.current = null;
+    createRestaurant(setup)
       .then(() => router.push("/dashboard"))
       .catch((err: unknown) => {
         const message = err instanceof Error ? err.message : "Une erreur est survenue.";
         toast.error(message);
         setLoading(false);
       });
-  }, [isAuthenticated, pendingSetup]);
+  }, [isAuthenticated, createRestaurant, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,7 +117,7 @@ export default function SignupPage() {
       });
 
       const slug = slugify(form.name) + "-" + Math.random().toString(36).slice(2, 6);
-      setPendingSetup({ name: form.name, slug });
+      pendingSetup.current = { name: form.name, slug };
       // createRestaurant is called by the useEffect above once isAuthenticated is true
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Une erreur est survenue.";
