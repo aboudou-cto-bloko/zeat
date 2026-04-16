@@ -28,7 +28,14 @@ export const metadata: Metadata = {
 
 // ── Avatar color (same logic as explorer page) ────────────────────────────────
 const AVATAR_COLORS = [
-  "#1a1a1a","#2d4a3e","#3d2b1f","#1e3a5f","#4a1942","#3b3000","#1f3d2b","#2e1f4a",
+  "#1a1a1a",
+  "#2d4a3e",
+  "#3d2b1f",
+  "#1e3a5f",
+  "#4a1942",
+  "#3b3000",
+  "#1f3d2b",
+  "#2e1f4a",
 ];
 function avatarColor(name: string) {
   let h = 0;
@@ -67,7 +74,6 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen bg-pure-white">
-
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <nav
         className="fixed top-0 z-50 flex h-16 w-full items-center justify-between bg-pure-white/90 backdrop-blur-xl px-5 sm:px-8 border-b border-border"
@@ -105,11 +111,13 @@ export default async function LandingPage() {
       {/* ── Hero — split layout (Uber Eats structure, Zeat identity) ──── */}
       <section className="min-h-screen bg-zeat-beige flex items-center pt-16">
         <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 py-16 sm:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
           {/* Left: copy */}
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-uber-black/8 px-4 py-2 text-micro font-semibold text-uber-black mb-6">
-              <span className="h-1.5 w-1.5 rounded-full bg-uber-black shrink-0" aria-hidden="true" />
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-uber-black shrink-0"
+                aria-hidden="true"
+              />
               Sans commission · Sans plateforme
             </div>
 
@@ -120,7 +128,9 @@ export default async function LandingPage() {
             </h1>
 
             <p className="text-body text-body-gray max-w-md mb-8 leading-relaxed">
-              Créez votre menu digital en 60 secondes, partagez le lien ou le QR code — vos clients commandent directement depuis leur téléphone, sans passer par une plateforme.
+              Créez votre menu digital en 60 secondes, partagez le lien ou le QR
+              code — vos clients commandent directement depuis leur téléphone,
+              sans passer par une plateforme.
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -143,19 +153,31 @@ export default async function LandingPage() {
             <p className="text-micro text-muted-gray mt-5">
               Gratuit. Sans carte bancaire.
               {count > 0 && (
-                <> · <strong className="text-uber-black font-semibold">{count} restaurant{count > 1 ? "s" : ""}</strong> déjà sur Zeat.</>
+                <>
+                  {" "}
+                  ·{" "}
+                  <strong className="text-uber-black font-semibold">
+                    {count} restaurant{count > 1 ? "s" : ""}
+                  </strong>{" "}
+                  déjà sur Zeat.
+                </>
               )}
             </p>
           </div>
 
           {/* Right: CSS mockup of the storefront */}
-          <div className="relative flex justify-center lg:justify-end" aria-hidden="true">
+          <div
+            className="relative flex justify-center lg:justify-end"
+            aria-hidden="true"
+          >
             <div className="relative w-[280px] sm:w-[300px]">
               {/* Phone shell */}
               <div className="relative rounded-[2.5rem] border-[3px] border-uber-black/10 bg-pure-white shadow-[0_32px_64px_rgba(0,0,0,0.14)] overflow-hidden">
                 {/* Fake status bar */}
                 <div className="flex items-center justify-between px-5 py-3 bg-uber-black">
-                  <span className="text-[10px] text-white/70 font-medium">9:41</span>
+                  <span className="text-[10px] text-white/70 font-medium">
+                    9:41
+                  </span>
                   <div className="flex gap-1">
                     <div className="h-1.5 w-3 rounded-full bg-white/60" />
                     <div className="h-1.5 w-3 rounded-full bg-white/60" />
@@ -164,7 +186,9 @@ export default async function LandingPage() {
                 {/* Banner placeholder */}
                 <div className="h-24 bg-gradient-to-br from-[#2d4a3e] to-[#1a1a1a] relative flex items-end px-4 pb-3">
                   <div className="h-10 w-10 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center">
-                    <span className="text-white font-heading font-bold text-sm">R</span>
+                    <span className="text-white font-heading font-bold text-sm">
+                      R
+                    </span>
                   </div>
                   <div className="ml-3">
                     <div className="h-3 w-24 rounded-full bg-white/80 mb-1.5" />
@@ -179,15 +203,28 @@ export default async function LandingPage() {
                 </div>
                 {/* Dish cards */}
                 <div className="px-3 pb-4 space-y-2">
-                  {[{ w: "w-28", p: "w-12" }, { w: "w-20", p: "w-10" }, { w: "w-24", p: "w-11" }].map((d, i) => (
-                    <div key={i} className="flex items-center gap-3 rounded-xl bg-chip-gray/60 p-3">
+                  {[
+                    { w: "w-28", p: "w-12" },
+                    { w: "w-20", p: "w-10" },
+                    { w: "w-24", p: "w-11" },
+                  ].map((d, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 rounded-xl bg-chip-gray/60 p-3"
+                    >
                       <div className="h-10 w-10 rounded-lg bg-hover-gray shrink-0" />
                       <div className="flex-1 space-y-1.5">
-                        <div className={`h-2.5 ${d.w} rounded-full bg-uber-black/20`} />
-                        <div className={`h-2 ${d.p} rounded-full bg-uber-black/10`} />
+                        <div
+                          className={`h-2.5 ${d.w} rounded-full bg-uber-black/20`}
+                        />
+                        <div
+                          className={`h-2 ${d.p} rounded-full bg-uber-black/10`}
+                        />
                       </div>
                       <div className="h-6 w-6 rounded-full bg-uber-black flex items-center justify-center shrink-0">
-                        <span className="text-white text-[10px] font-bold">+</span>
+                        <span className="text-white text-[10px] font-bold">
+                          +
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -195,8 +232,12 @@ export default async function LandingPage() {
                 {/* Cart CTA */}
                 <div className="px-3 pb-5">
                   <div className="h-11 rounded-full bg-uber-black flex items-center justify-between px-4">
-                    <span className="text-white text-[11px] font-bold">Voir le panier</span>
-                    <span className="text-white/70 text-[10px]">2 750 FCFA</span>
+                    <span className="text-white text-[11px] font-bold">
+                      Voir le panier
+                    </span>
+                    <span className="text-white/70 text-[10px]">
+                      2 750 FCFA
+                    </span>
                   </div>
                 </div>
               </div>
@@ -207,15 +248,21 @@ export default async function LandingPage() {
                   <BellRing size={12} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold text-uber-black leading-none">Nouvelle commande</p>
-                  <p className="text-[9px] text-muted-gray mt-0.5">Kofi · 3 450 FCFA</p>
+                  <p className="text-[10px] font-semibold text-uber-black leading-none">
+                    Nouvelle commande
+                  </p>
+                  <p className="text-[9px] text-muted-gray mt-0.5">
+                    Kofi · 3 450 FCFA
+                  </p>
                 </div>
               </div>
 
               {/* QR floating badge */}
               <div className="absolute -bottom-3 -left-5 rounded-2xl bg-uber-black shadow-[var(--shadow-float)] px-3 py-2 flex items-center gap-2">
                 <QrCode size={14} className="text-white" />
-                <p className="text-[10px] font-semibold text-white">Scan &amp; Commander</p>
+                <p className="text-[10px] font-semibold text-white">
+                  Scan &amp; Commander
+                </p>
               </div>
             </div>
           </div>
@@ -226,13 +273,19 @@ export default async function LandingPage() {
       <div className="bg-uber-black py-6 px-5 sm:px-8">
         <div className="mx-auto max-w-4xl grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 text-center">
           {[
-            { value: "60 s",   label: "pour créer son menu" },
-            { value: "0 %",    label: "de commission" },
-            { value: "∞",      label: "commandes incluses" },
-            { value: count > 0 ? `${count}+` : "✓", label: count > 0 ? "restaurants actifs" : "Gratuit à démarrer" },
+            { value: "60 s", label: "pour créer son menu" },
+            { value: "0 %", label: "de commission" },
+            { value: "∞", label: "commandes incluses" },
+            {
+              value: count > 0 ? `${count}+` : "✓",
+              label: count > 0 ? "restaurants actifs" : "Gratuit à démarrer",
+            },
           ].map((s) => (
             <div key={s.label}>
-              <p className="font-heading text-[28px] sm:text-[32px] font-bold text-white leading-none" style={{ fontVariantNumeric: "tabular-nums" }}>
+              <p
+                className="font-heading text-[28px] sm:text-[32px] font-bold text-white leading-none"
+                style={{ fontVariantNumeric: "tabular-nums" }}
+              >
                 {s.value}
               </p>
               <p className="text-micro text-muted-gray mt-1">{s.label}</p>
@@ -248,7 +301,8 @@ export default async function LandingPage() {
             Une solution pour chacun
           </h2>
           <p className="text-body text-muted-gray text-center mb-12 max-w-md mx-auto">
-            Que vous soyez restaurateur ou client, Zeat simplifie l'expérience de bout en bout.
+            Que vous soyez restaurateur ou client, Zeat simplifie
+            l&apos;expérience de bout en bout.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -259,12 +313,19 @@ export default async function LandingPage() {
             >
               <div
                 className="absolute inset-0 opacity-10 transition-opacity duration-300 group-hover:opacity-20"
-                style={{ background: "radial-gradient(ellipse at 80% 20%, #f5f0eb 0%, transparent 60%)" }}
+                style={{
+                  background:
+                    "radial-gradient(ellipse at 80% 20%, #f5f0eb 0%, transparent 60%)",
+                }}
                 aria-hidden="true"
               />
               <div className="relative">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 mb-5">
-                  <UtensilsCrossed size={18} className="text-white" aria-hidden="true" />
+                  <UtensilsCrossed
+                    size={18}
+                    className="text-white"
+                    aria-hidden="true"
+                  />
                 </div>
                 <p className="text-micro font-semibold text-white/60 uppercase tracking-widest mb-2">
                   Pour les restaurateurs
@@ -273,12 +334,18 @@ export default async function LandingPage() {
                   Créez votre menu digital
                 </h3>
                 <p className="text-caption text-white/70 leading-relaxed max-w-xs">
-                  Ajoutez vos plats, personnalisez votre vitrine avec logo et bannière, partagez le lien ou le QR code — vos clients commandent directement.
+                  Ajoutez vos plats, personnalisez votre vitrine avec logo et
+                  bannière, partagez le lien ou le QR code — vos clients
+                  commandent directement.
                 </p>
               </div>
               <div className="relative flex items-center gap-2 text-caption font-semibold text-white mt-6">
                 Créer mon menu gratuitement
-                <ArrowRight size={15} className="transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true" />
+                <ArrowRight
+                  size={15}
+                  className="transition-transform duration-150 group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
               </div>
             </Link>
 
@@ -289,7 +356,11 @@ export default async function LandingPage() {
             >
               <div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-uber-black/8 mb-5">
-                  <Search size={18} className="text-uber-black" aria-hidden="true" />
+                  <Search
+                    size={18}
+                    className="text-uber-black"
+                    aria-hidden="true"
+                  />
                 </div>
                 <p className="text-micro font-semibold text-muted-gray uppercase tracking-widest mb-2">
                   Pour les clients
@@ -298,12 +369,18 @@ export default async function LandingPage() {
                   Explorez et commandez
                 </h3>
                 <p className="text-caption text-body-gray leading-relaxed max-w-xs">
-                  Parcourez les menus des restaurants autour de vous. Cherchez un plat, ajoutez au panier et passez commande — directement, sans frais cachés.
+                  Parcourez les menus des restaurants autour de vous. Cherchez
+                  un plat, ajoutez au panier et passez commande — directement,
+                  sans frais cachés.
                 </p>
               </div>
               <div className="flex items-center gap-2 text-caption font-semibold text-uber-black mt-6">
                 Explorer les menus
-                <ArrowRight size={15} className="transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true" />
+                <ArrowRight
+                  size={15}
+                  className="transition-transform duration-150 group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
               </div>
             </Link>
           </div>
@@ -322,7 +399,10 @@ export default async function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 relative">
             {/* Connector line (desktop) */}
-            <div className="hidden md:block absolute top-8 left-[calc(16.66%+1.5rem)] right-[calc(16.66%+1.5rem)] h-px bg-border" aria-hidden="true" />
+            <div
+              className="hidden md:block absolute top-8 left-[calc(16.66%+1.5rem)] right-[calc(16.66%+1.5rem)] h-px bg-border"
+              aria-hidden="true"
+            />
 
             {[
               {
@@ -348,9 +428,15 @@ export default async function LandingPage() {
                 <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-uber-black text-white mb-5 shadow-[var(--shadow-float)]">
                   {step.icon}
                 </div>
-                <p className="text-[11px] font-bold text-muted-gray tracking-widest uppercase mb-2">{step.n}</p>
-                <h3 className="text-caption font-semibold text-uber-black mb-2">{step.title}</h3>
-                <p className="text-micro text-body-gray leading-relaxed">{step.desc}</p>
+                <p className="text-[11px] font-bold text-muted-gray tracking-widest uppercase mb-2">
+                  {step.n}
+                </p>
+                <h3 className="text-caption font-semibold text-uber-black mb-2">
+                  {step.title}
+                </h3>
+                <p className="text-micro text-body-gray leading-relaxed">
+                  {step.desc}
+                </p>
               </div>
             ))}
           </div>
@@ -426,7 +512,13 @@ export default async function LandingPage() {
                       <div className="absolute bottom-3 left-3">
                         {r.logoUrl ? (
                           <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-white shadow-[var(--shadow-float)]">
-                            <Image src={r.logoUrl} alt="" fill sizes="40px" className="object-cover" />
+                            <Image
+                              src={r.logoUrl}
+                              alt=""
+                              fill
+                              sizes="40px"
+                              className="object-cover"
+                            />
                           </div>
                         ) : (
                           <div
@@ -451,7 +543,11 @@ export default async function LandingPage() {
                       </p>
                       <div className="flex items-center gap-1 text-micro font-semibold text-uber-black mt-auto pt-1">
                         Voir le menu
-                        <ArrowRight size={11} className="transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
+                        <ArrowRight
+                          size={11}
+                          className="transition-transform duration-150 group-hover:translate-x-0.5"
+                          aria-hidden="true"
+                        />
                       </div>
                     </div>
                   </Link>
@@ -461,7 +557,10 @@ export default async function LandingPage() {
 
             <div className="mt-8 sm:hidden text-center">
               <Link href="/restaurants">
-                <Button variant="outline" className="rounded-full border-uber-black/20 text-caption font-medium hover:border-uber-black px-7 py-3 h-auto gap-2">
+                <Button
+                  variant="outline"
+                  className="rounded-full border-uber-black/20 text-caption font-medium hover:border-uber-black px-7 py-3 h-auto gap-2"
+                >
                   Voir tous les restaurants
                   <ArrowRight size={14} aria-hidden="true" />
                 </Button>
@@ -481,7 +580,8 @@ export default async function LandingPage() {
             Prêt à digitaliser votre restaurant ?
           </h2>
           <p className="text-body text-white/60 mb-8 max-w-md mx-auto">
-            Gratuit. Sans carte bancaire. Sans commission. Votre menu en ligne en moins d'une heure.
+            Gratuit. Sans carte bancaire. Sans commission. Votre menu en ligne
+            en moins d&apos;une heure.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link href="/signup">
@@ -508,7 +608,11 @@ export default async function LandingPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-10">
             {/* Brand */}
             <div className="col-span-2 sm:col-span-1">
-              <Link href="/" className="font-heading text-[20px] font-bold text-white tracking-tighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm" translate="no">
+              <Link
+                href="/"
+                className="font-heading text-[20px] font-bold text-white tracking-tighter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                translate="no"
+              >
                 Zeat
               </Link>
               <p className="text-micro text-white/40 mt-2 leading-relaxed">
@@ -518,15 +622,20 @@ export default async function LandingPage() {
 
             {/* Produit */}
             <div>
-              <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-3">Produit</p>
+              <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-3">
+                Produit
+              </p>
               <ul className="space-y-2">
                 {[
-                  { href: "/signup",      label: "Créer un menu" },
-                  { href: "/login",       label: "Connexion" },
-                  { href: "/m/demo",      label: "Démo" },
+                  { href: "/signup", label: "Créer un menu" },
+                  { href: "/login", label: "Connexion" },
+                  { href: "/m/demo", label: "Démo" },
                 ].map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-micro text-white/60 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm">
+                    <Link
+                      href={l.href}
+                      className="text-micro text-white/60 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm"
+                    >
                       {l.label}
                     </Link>
                   </li>
@@ -536,14 +645,19 @@ export default async function LandingPage() {
 
             {/* Explorer */}
             <div>
-              <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-3">Explorer</p>
+              <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-3">
+                Explorer
+              </p>
               <ul className="space-y-2">
                 {[
                   { href: "/restaurants", label: "Tous les restaurants" },
                   { href: "/restaurants", label: "Rechercher un plat" },
                 ].map((l, i) => (
                   <li key={i}>
-                    <Link href={l.href} className="text-micro text-white/60 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm">
+                    <Link
+                      href={l.href}
+                      className="text-micro text-white/60 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm"
+                    >
                       {l.label}
                     </Link>
                   </li>
@@ -553,14 +667,19 @@ export default async function LandingPage() {
 
             {/* Ressources */}
             <div>
-              <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-3">Aide</p>
+              <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-3">
+                Aide
+              </p>
               <ul className="space-y-2">
                 {[
                   { href: "/dashboard/settings", label: "Paramètres" },
-                  { href: "/signup",             label: "Démarrer" },
+                  { href: "/signup", label: "Démarrer" },
                 ].map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-micro text-white/60 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm">
+                    <Link
+                      href={l.href}
+                      className="text-micro text-white/60 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm"
+                    >
                       {l.label}
                     </Link>
                   </li>
@@ -573,9 +692,7 @@ export default async function LandingPage() {
             <p className="text-micro text-white/30">
               © {new Date().getFullYear()} Zeat. Tous droits réservés.
             </p>
-            <p className="text-micro text-white/30">
-              Fait avec ♥ pour les restaurateurs africains
-            </p>
+            <p className="text-micro text-white/30">Fait au Bénin</p>
           </div>
         </div>
       </footer>
