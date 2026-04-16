@@ -26,7 +26,7 @@ export function DashboardSidebar() {
   const restaurant = useQuery(api.restaurants.getCurrent);
 
   return (
-    <aside className="flex h-screen w-64 flex-col border-r border-border bg-pure-white">
+    <aside className="hidden lg:flex h-screen w-64 flex-col border-r border-border bg-pure-white">
       {/* Logo */}
       <div className="flex h-16 items-center border-b border-border px-6">
         <span className="font-heading text-[22px] font-bold tracking-tighter text-uber-black">
@@ -61,7 +61,7 @@ export function DashboardSidebar() {
                   : "text-body-gray hover:bg-chip-gray hover:text-uber-black"
               )}
             >
-              <Icon size={16} />
+              <Icon size={16} aria-hidden="true" />
               {item.label}
             </Link>
           );
@@ -77,7 +77,7 @@ export function DashboardSidebar() {
             rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-caption font-medium text-body-gray hover:bg-chip-gray hover:text-uber-black transition-colors"
           >
-            <ExternalLink size={16} />
+            <ExternalLink size={16} aria-hidden="true" />
             Voir mon menu public
           </a>
         )}
@@ -85,7 +85,7 @@ export function DashboardSidebar() {
           onClick={() => signOut()}
           className="flex w-full items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-caption font-medium text-body-gray hover:bg-chip-gray hover:text-uber-black transition-colors"
         >
-          <LogOut size={16} />
+          <LogOut size={16} aria-hidden="true" />
           Déconnexion
         </button>
       </div>

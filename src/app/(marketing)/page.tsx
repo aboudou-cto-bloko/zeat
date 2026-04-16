@@ -24,10 +24,10 @@ export default function LandingPage() {
           Zeat
         </span>
         <div className="flex items-center gap-3">
-          <Link
-            href="/restaurants"
-            className="hidden sm:block text-caption font-medium text-body-gray hover:text-uber-black transition-colors px-3 py-1.5"
-          >
+          <Link href="/search" className="hidden sm:block text-caption font-medium text-body-gray hover:text-uber-black transition-colors px-3 py-1.5">
+            Rechercher
+          </Link>
+          <Link href="/restaurants" className="hidden sm:block text-caption font-medium text-body-gray hover:text-uber-black transition-colors px-3 py-1.5">
             Explorer
           </Link>
           <Link href="/login">

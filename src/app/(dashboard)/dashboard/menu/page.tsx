@@ -57,11 +57,9 @@ export default function MenuPage() {
   const removeDish = useMutation(api.dishes.remove);
   const generateUploadUrl = useMutation(api.dishes.generateUploadUrl);
 
-  // Category modal
   const [catModal, setCatModal] = useState<{ open: boolean; editing?: Category }>({ open: false });
   const [catName, setCatName] = useState("");
 
-  // Dish modal
   const [dishModal, setDishModal] = useState<{
     open: boolean;
     categoryId?: Id<"categories">;
@@ -69,14 +67,12 @@ export default function MenuPage() {
   }>({ open: false });
   const [dishForm, setDishForm] = useState({ name: "", description: "", price: "" });
 
-  // Image upload state
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [removeImage, setRemoveImage] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Expanded categories
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const toggleExpanded = (id: string) => {
@@ -87,7 +83,6 @@ export default function MenuPage() {
     });
   };
 
-  // ── Image helpers ──
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -110,16 +105,8 @@ export default function MenuPage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // ── Category handlers ──
-  const openAddCategory = () => {
-    setCatName("");
-    setCatModal({ open: true });
-  };
-
-  const openEditCategory = (cat: Category) => {
-    setCatName(cat.name);
-    setCatModal({ open: true, editing: cat });
-  };
+  const openAddCategory = () => { setCatName(""); setCatModal({ open: true }); };
+  const openEditCategory = (cat: Category) => { setCatName(cat.name); setCatModal({ open: true, editing: cat }); };
 
   const saveCategory = async () => {
     if (!catName.trim()) return;
@@ -132,21 +119,16 @@ export default function MenuPage() {
         toast.success("Catégorie créée");
       }
       setCatModal({ open: false });
-    } catch {
-      toast.error("Une erreur est survenue");
-    }
+    } catch { toast.error("Une erreur est survenue"); }
   };
 
   const deleteCategory = async (id: Id<"categories">) => {
     try {
       await removeCategory({ id });
       toast.success("Catégorie supprimée");
-    } catch {
-      toast.error("Une erreur est survenue");
-    }
+    } catch { toast.error("Une erreur est survenue"); }
   };
 
-  // ── Dish handlers ──
   const openAddDish = (categoryId: Id<"categories">) => {
     setDishForm({ name: "", description: "", price: "" });
     resetImageState();
@@ -154,11 +136,7 @@ export default function MenuPage() {
   };
 
   const openEditDish = (dish: Dish) => {
-    setDishForm({
-      name: dish.name,
-      description: dish.description ?? "",
-      price: String(dish.price),
-    });
+    setDishForm({ name: dish.name, description: dish.description ?? "", price: String(dish.price) });
     resetImageState();
     setImagePreview(dish.imageUrl ?? null);
     setDishModal({ open: true, editing: dish });
@@ -167,74 +145,32 @@ export default function MenuPage() {
   const saveDish = async () => {
     if (!dishForm.name.trim() || !dishForm.price) return;
     const price = parseInt(dishForm.price, 10);
-    if (isNaN(price) || price <= 0) {
-      toast.error("Prix invalide");
-      return;
-    }
-
+    if (isNaN(price) || price <= 0) { toast.error("Prix invalide"); return; }
     setUploading(true);
     try {
-      // Upload new image if selected
       let newImageId: Id<"_storage"> | undefined = undefined;
       if (imageFile) {
         const uploadUrl = await generateUploadUrl();
-        const res = await fetch(uploadUrl, {
-          method: "POST",
-          headers: { "Content-Type": imageFile.type },
-          body: imageFile,
-        });
+        const res = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": imageFile.type }, body: imageFile });
         if (!res.ok) throw new Error("Upload échoué");
         const { storageId } = await res.json() as { storageId: Id<"_storage"> };
         newImageId = storageId;
       }
-
       if (dishModal.editing) {
-        // Determine final imageId:
-        // - new file uploaded → newImageId
-        // - explicitly removed → undefined (will delete old in mutation)
-        // - unchanged → keep existing imageId
-        const imageId = imageFile
-          ? newImageId
-          : removeImage
-          ? undefined
-          : dishModal.editing.imageId;
-
-        await updateDish({
-          id: dishModal.editing._id,
-          name: dishForm.name.trim(),
-          description: dishForm.description || undefined,
-          price,
-          available: dishModal.editing.available,
-          imageId,
-        });
+        const imageId = imageFile ? newImageId : removeImage ? undefined : dishModal.editing.imageId;
+        await updateDish({ id: dishModal.editing._id, name: dishForm.name.trim(), description: dishForm.description || undefined, price, available: dishModal.editing.available, imageId });
         toast.success("Plat modifié");
       } else if (dishModal.categoryId) {
-        await createDish({
-          categoryId: dishModal.categoryId,
-          name: dishForm.name.trim(),
-          description: dishForm.description || undefined,
-          price,
-          imageId: newImageId,
-        });
+        await createDish({ categoryId: dishModal.categoryId, name: dishForm.name.trim(), description: dishForm.description || undefined, price, imageId: newImageId });
         toast.success("Plat ajouté");
       }
       setDishModal({ open: false });
-    } catch {
-      toast.error("Une erreur est survenue");
-    } finally {
-      setUploading(false);
-    }
+    } catch { toast.error("Une erreur est survenue"); }
+    finally { setUploading(false); }
   };
 
   const toggleAvailability = async (dish: Dish) => {
-    await updateDish({
-      id: dish._id,
-      name: dish.name,
-      description: dish.description,
-      price: dish.price,
-      available: !dish.available,
-      imageId: dish.imageId,
-    });
+    await updateDish({ id: dish._id, name: dish.name, description: dish.description, price: dish.price, available: !dish.available, imageId: dish.imageId });
   };
 
   const deleteDish = async (id: Id<"dishes">) => {
@@ -245,9 +181,6 @@ export default function MenuPage() {
   const getCategoryDishes = (categoryId: Id<"categories">) =>
     (dishes ?? []).filter((d) => d.categoryId === categoryId);
 
-  // Current image to display in modal
-  const currentImageSrc = imagePreview;
-
   return (
     <div className="flex flex-col">
       <DashboardHeader
@@ -256,23 +189,21 @@ export default function MenuPage() {
         actions={
           <Button
             onClick={openAddCategory}
-            className="rounded-full bg-uber-black text-white font-bold text-caption px-5 hover:bg-body-gray"
+            className="rounded-full bg-uber-black text-white font-bold text-micro sm:text-caption px-3 sm:px-5 hover:bg-body-gray"
           >
-            <Plus size={14} className="mr-1.5" />
-            Catégorie
+            <Plus size={14} className="mr-1" aria-hidden="true" />
+            <span className="hidden sm:inline">Catégorie</span>
+            <span className="sm:hidden">Cat.</span>
           </Button>
         }
       />
 
-      <div className="p-8 space-y-3">
+      <div className="p-4 sm:p-8 space-y-3">
         {categories?.length === 0 && (
-          <div className="card-whisper p-12 text-center">
+          <div className="card-whisper p-8 sm:p-12 text-center">
             <p className="text-body text-muted-gray mb-4">Aucune catégorie pour l&apos;instant.</p>
-            <Button
-              onClick={openAddCategory}
-              className="rounded-full bg-uber-black text-white font-bold px-6 hover:bg-body-gray"
-            >
-              <Plus size={14} className="mr-1.5" />
+            <Button onClick={openAddCategory} className="rounded-full bg-uber-black text-white font-bold px-6 hover:bg-body-gray">
+              <Plus size={14} className="mr-1.5" aria-hidden="true" />
               Ajouter une catégorie
             </Button>
           </div>
@@ -284,45 +215,29 @@ export default function MenuPage() {
           return (
             <div key={cat._id} className="card-whisper overflow-hidden">
               {/* Category row */}
-              <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center justify-between px-4 sm:px-6 py-4">
                 <button
                   onClick={() => toggleExpanded(cat._id)}
                   aria-expanded={isOpen}
                   aria-label={`${isOpen ? "Réduire" : "Développer"} la catégorie ${cat.name}`}
-                  className="flex items-center gap-3 flex-1 text-left"
+                  className="flex items-center gap-3 flex-1 text-left min-w-0"
                 >
-                  {isOpen ? (
-                    <ChevronUp size={16} className="text-muted-gray" />
-                  ) : (
-                    <ChevronDown size={16} className="text-muted-gray" />
-                  )}
-                  <span className="text-caption font-semibold text-uber-black">{cat.name}</span>
-                  <span className="text-micro text-muted-gray">
-                    {catDishes.length} plat{catDishes.length > 1 ? "s" : ""}
-                  </span>
+                  {isOpen ? <ChevronUp size={16} className="text-muted-gray shrink-0" /> : <ChevronDown size={16} className="text-muted-gray shrink-0" />}
+                  <span className="text-caption font-semibold text-uber-black truncate">{cat.name}</span>
+                  <span className="text-micro text-muted-gray shrink-0">{catDishes.length} plat{catDishes.length > 1 ? "s" : ""}</span>
                 </button>
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => openAddDish(cat._id)}
-                    className="rounded-full text-micro h-8 px-3 text-body-gray hover:text-uber-black hover:bg-chip-gray"
-                  >
-                    <Plus size={13} className="mr-1" />
-                    Plat
+                <div className="flex items-center gap-1 sm:gap-2 ml-2 shrink-0">
+                  <Button size="sm" variant="ghost" onClick={() => openAddDish(cat._id)}
+                    className="rounded-full text-micro h-8 px-2 sm:px-3 text-body-gray hover:text-uber-black hover:bg-chip-gray">
+                    <Plus size={13} aria-hidden="true" />
+                    <span className="hidden sm:inline ml-1">Plat</span>
                   </Button>
-                  <button
-                    onClick={() => openEditCategory(cat)}
-                    aria-label={`Modifier la catégorie ${cat.name}`}
-                    className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-chip-gray text-muted-gray hover:text-uber-black transition-colors"
-                  >
+                  <button onClick={() => openEditCategory(cat)} aria-label={`Modifier ${cat.name}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-chip-gray text-muted-gray hover:text-uber-black transition-colors">
                     <Pencil size={13} aria-hidden="true" />
                   </button>
-                  <button
-                    onClick={() => deleteCategory(cat._id)}
-                    aria-label={`Supprimer la catégorie ${cat.name}`}
-                    className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-red-50 text-muted-gray hover:text-red-600 transition-colors"
-                  >
+                  <button onClick={() => deleteCategory(cat._id)} aria-label={`Supprimer ${cat.name}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-red-50 text-muted-gray hover:text-red-600 transition-colors">
                     <Trash2 size={13} aria-hidden="true" />
                   </button>
                 </div>
@@ -337,71 +252,51 @@ export default function MenuPage() {
                     </div>
                   )}
                   {catDishes.map((dish) => (
-                    <div
-                      key={dish._id}
-                      className="flex items-center justify-between px-6 py-4 hover:bg-hover-light transition-colors"
-                    >
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div key={dish._id} className="px-4 sm:px-6 py-3 hover:bg-hover-light transition-colors">
+                      {/* Mobile: stacked layout */}
+                      <div className="flex items-start gap-3">
                         {/* Thumbnail */}
                         {dish.imageUrl ? (
-                          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg">
-                            <Image
-                              src={dish.imageUrl}
-                              alt={dish.name}
-                              fill
-                              sizes="40px"
-                              className="object-cover"
-                            />
+                          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg mt-0.5">
+                            <Image src={dish.imageUrl} alt={dish.name} fill sizes="40px" className="object-cover" />
                           </div>
                         ) : (
-                          <div className="h-10 w-10 shrink-0 rounded-lg bg-chip-gray" />
+                          <div className="h-10 w-10 shrink-0 rounded-lg bg-chip-gray mt-0.5" />
                         )}
+
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-caption font-medium text-uber-black truncate">
-                              {dish.name}
-                            </span>
+                          {/* Name row */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-caption font-medium text-uber-black">{dish.name}</span>
                             {!dish.available && (
-                              <Badge variant="secondary" className="text-[11px] rounded-full">
-                                Indispo
-                              </Badge>
+                              <Badge variant="secondary" className="text-[10px] rounded-full shrink-0">Indispo</Badge>
                             )}
                           </div>
                           {dish.description && (
-                            <p className="text-micro text-muted-gray mt-0.5 truncate max-w-xs">
-                              {dish.description}
-                            </p>
+                            <p className="text-micro text-muted-gray mt-0.5 line-clamp-1">{dish.description}</p>
                           )}
+
+                          {/* Actions row */}
+                          <div className="flex items-center gap-2 mt-2 flex-wrap">
+                            <span className="text-caption font-semibold text-uber-black">{formatPrice(dish.price)}</span>
+                            <button
+                              onClick={() => toggleAvailability(dish)}
+                              className={`text-micro rounded-full px-2.5 py-1 font-medium transition-colors ${
+                                dish.available ? "bg-chip-gray text-body-gray hover:bg-hover-gray" : "bg-uber-black text-white hover:bg-body-gray"
+                              }`}
+                            >
+                              {dish.available ? "Dispo" : "Remettre dispo"}
+                            </button>
+                            <button onClick={() => openEditDish(dish)} aria-label={`Modifier ${dish.name}`}
+                              className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-chip-gray text-muted-gray hover:text-uber-black transition-colors">
+                              <Pencil size={12} aria-hidden="true" />
+                            </button>
+                            <button onClick={() => deleteDish(dish._id)} aria-label={`Supprimer ${dish.name}`}
+                              className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-red-50 text-muted-gray hover:text-red-600 transition-colors">
+                              <Trash2 size={12} aria-hidden="true" />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-4 ml-4">
-                        <span className="text-caption font-semibold text-uber-black whitespace-nowrap">
-                          {formatPrice(dish.price)}
-                        </span>
-                        <button
-                          onClick={() => toggleAvailability(dish)}
-                          className={`text-micro rounded-full px-3 py-1 font-medium transition-colors ${
-                            dish.available
-                              ? "bg-chip-gray text-body-gray hover:bg-hover-gray"
-                              : "bg-uber-black text-white hover:bg-body-gray"
-                          }`}
-                        >
-                          {dish.available ? "Dispo" : "Remettre dispo"}
-                        </button>
-                        <button
-                          onClick={() => openEditDish(dish)}
-                          aria-label={`Modifier ${dish.name}`}
-                          className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-chip-gray text-muted-gray hover:text-uber-black transition-colors"
-                        >
-                          <Pencil size={13} aria-hidden="true" />
-                        </button>
-                        <button
-                          onClick={() => deleteDish(dish._id)}
-                          aria-label={`Supprimer ${dish.name}`}
-                          className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-red-50 text-muted-gray hover:text-red-600 transition-colors"
-                        >
-                          <Trash2 size={13} aria-hidden="true" />
-                        </button>
                       </div>
                     </div>
                   ))}
@@ -414,7 +309,7 @@ export default function MenuPage() {
 
       {/* Category Modal */}
       <Dialog open={catModal.open} onOpenChange={(o) => setCatModal({ open: o })}>
-        <DialogContent className="rounded-[var(--radius-xl)] max-w-sm">
+        <DialogContent className="rounded-[var(--radius-xl)] max-w-sm mx-4">
           <DialogHeader>
             <DialogTitle className="font-heading text-[20px] font-bold">
               {catModal.editing ? "Modifier la catégorie" : "Nouvelle catégorie"}
@@ -423,19 +318,12 @@ export default function MenuPage() {
           <div className="space-y-4 pt-2">
             <div className="space-y-1.5">
               <Label className="text-caption font-medium">Nom de la catégorie</Label>
-              <Input
-                placeholder="Ex : Entrées, Plats, Desserts…"
-                value={catName}
+              <Input placeholder="Ex : Entrées, Plats, Desserts…" value={catName}
                 onChange={(e) => setCatName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && saveCategory()}
-                className="input-zeat"
-                autoFocus
-              />
+                className="input-zeat" autoFocus />
             </div>
-            <Button
-              onClick={saveCategory}
-              className="w-full rounded-full bg-uber-black text-white font-bold hover:bg-body-gray"
-            >
+            <Button onClick={saveCategory} className="w-full rounded-full bg-uber-black text-white font-bold hover:bg-body-gray">
               {catModal.editing ? "Enregistrer" : "Créer la catégorie"}
             </Button>
           </div>
@@ -444,7 +332,7 @@ export default function MenuPage() {
 
       {/* Dish Modal */}
       <Dialog open={dishModal.open} onOpenChange={(o) => { if (!uploading) setDishModal({ open: o }); }}>
-        <DialogContent className="rounded-[var(--radius-xl)] max-w-sm">
+        <DialogContent className="rounded-[var(--radius-xl)] max-w-sm mx-4 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-heading text-[20px] font-bold">
               {dishModal.editing ? "Modifier le plat" : "Nouveau plat"}
@@ -456,48 +344,25 @@ export default function MenuPage() {
               <Label className="text-caption font-medium">
                 Photo <span className="text-muted-gray">(optionnel)</span>
               </Label>
-              {currentImageSrc ? (
+              {imagePreview ? (
                 <div className="relative h-36 w-full overflow-hidden rounded-[var(--radius-lg)]">
-                  <Image
-                    src={currentImageSrc}
-                    alt="Aperçu"
-                    fill
-                    sizes="384px"
-                    className="object-cover"
-                  />
-                  <button
-                    type="button"
-                    onClick={clearImage}
-                    aria-label="Supprimer la photo"
-                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
-                  >
+                  <Image src={imagePreview} alt="Aperçu" fill sizes="384px" className="object-cover" />
+                  <button type="button" onClick={clearImage} aria-label="Supprimer la photo"
+                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
                     <X size={13} aria-hidden="true" />
                   </button>
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex h-24 w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-lg)] border-2 border-dashed border-border hover:border-uber-black transition-colors text-muted-gray hover:text-uber-black"
-                >
+                <button type="button" onClick={() => fileInputRef.current?.click()}
+                  className="flex h-24 w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-lg)] border-2 border-dashed border-border hover:border-uber-black transition-colors text-muted-gray hover:text-uber-black">
                   <ImagePlus size={20} aria-hidden="true" />
                   <span className="text-micro font-medium">Ajouter une photo</span>
                 </button>
               )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-                aria-label="Choisir une photo pour le plat"
-              />
-              {currentImageSrc && !imageFile && (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-micro text-body-gray hover:text-uber-black underline underline-offset-2"
-                >
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} aria-label="Choisir une photo" />
+              {imagePreview && !imageFile && (
+                <button type="button" onClick={() => fileInputRef.current?.click()}
+                  className="text-micro text-body-gray hover:text-uber-black underline underline-offset-2">
                   Changer la photo
                 </button>
               )}
@@ -505,41 +370,26 @@ export default function MenuPage() {
 
             <div className="space-y-1.5">
               <Label className="text-caption font-medium">Nom du plat</Label>
-              <Input
-                placeholder="Ex : Thiéboudienne"
-                value={dishForm.name}
+              <Input placeholder="Ex : Thiéboudienne" value={dishForm.name}
                 onChange={(e) => setDishForm({ ...dishForm, name: e.target.value })}
-                className="input-zeat"
-                autoFocus
-              />
+                className="input-zeat" autoFocus />
             </div>
             <div className="space-y-1.5">
               <Label className="text-caption font-medium">
                 Description <span className="text-muted-gray">(optionnel)</span>
               </Label>
-              <Input
-                placeholder="Courte description du plat…"
-                value={dishForm.description}
+              <Input placeholder="Courte description du plat…" value={dishForm.description}
                 onChange={(e) => setDishForm({ ...dishForm, description: e.target.value })}
-                className="input-zeat"
-              />
+                className="input-zeat" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-caption font-medium">Prix (FCFA)</Label>
-              <Input
-                type="number"
-                placeholder="Ex : 2500"
-                value={dishForm.price}
+              <Input type="number" placeholder="Ex : 2500" value={dishForm.price}
                 onChange={(e) => setDishForm({ ...dishForm, price: e.target.value })}
-                className="input-zeat"
-                min={0}
-              />
+                className="input-zeat" min={0} />
             </div>
-            <Button
-              onClick={saveDish}
-              disabled={uploading}
-              className="w-full rounded-full bg-uber-black text-white font-bold hover:bg-body-gray"
-            >
+            <Button onClick={saveDish} disabled={uploading}
+              className="w-full rounded-full bg-uber-black text-white font-bold hover:bg-body-gray">
               {uploading ? "Envoi en cours…" : dishModal.editing ? "Enregistrer" : "Ajouter le plat"}
             </Button>
           </div>
