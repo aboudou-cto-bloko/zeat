@@ -32,6 +32,7 @@ export default defineSchema({
     price: v.number(), // in XOF (whole francs)
     available: v.boolean(),
     position: v.number(),
+    imageId: v.optional(v.id("_storage")),
   })
     .index("by_restaurant", ["restaurantId"])
     .index("by_category", ["categoryId"]),

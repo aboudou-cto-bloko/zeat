@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/utils";
-import { Plus, Pencil, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronDown, ChevronUp, ImagePlus, X } from "lucide-react";
+import Image from "next/image";
 
 type Category = {
   _id: Id<"categories">;
@@ -33,6 +34,8 @@ type Dish = {
   price: number;
   available: boolean;
   position: number;
+  imageId?: Id<"_storage">;
+  imageUrl?: string | null;
 };
 
 export default function MenuPage() {
@@ -52,6 +55,7 @@ export default function MenuPage() {
   const createDish = useMutation(api.dishes.create);
   const updateDish = useMutation(api.dishes.update);
   const removeDish = useMutation(api.dishes.remove);
+  const generateUploadUrl = useMutation(api.dishes.generateUploadUrl);
 
   // Category modal
   const [catModal, setCatModal] = useState<{ open: boolean; editing?: Category }>({ open: false });
@@ -65,6 +69,13 @@ export default function MenuPage() {
   }>({ open: false });
   const [dishForm, setDishForm] = useState({ name: "", description: "", price: "" });
 
+  // Image upload state
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [removeImage, setRemoveImage] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Expanded categories
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
@@ -74,6 +85,29 @@ export default function MenuPage() {
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
+  };
+
+  // ── Image helpers ──
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setRemoveImage(false);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const clearImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setRemoveImage(true);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const resetImageState = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setRemoveImage(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   // ── Category handlers ──
@@ -115,6 +149,7 @@ export default function MenuPage() {
   // ── Dish handlers ──
   const openAddDish = (categoryId: Id<"categories">) => {
     setDishForm({ name: "", description: "", price: "" });
+    resetImageState();
     setDishModal({ open: true, categoryId });
   };
 
@@ -124,6 +159,8 @@ export default function MenuPage() {
       description: dish.description ?? "",
       price: String(dish.price),
     });
+    resetImageState();
+    setImagePreview(dish.imageUrl ?? null);
     setDishModal({ open: true, editing: dish });
   };
 
@@ -134,14 +171,41 @@ export default function MenuPage() {
       toast.error("Prix invalide");
       return;
     }
+
+    setUploading(true);
     try {
+      // Upload new image if selected
+      let newImageId: Id<"_storage"> | undefined = undefined;
+      if (imageFile) {
+        const uploadUrl = await generateUploadUrl();
+        const res = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": imageFile.type },
+          body: imageFile,
+        });
+        if (!res.ok) throw new Error("Upload échoué");
+        const { storageId } = await res.json() as { storageId: Id<"_storage"> };
+        newImageId = storageId;
+      }
+
       if (dishModal.editing) {
+        // Determine final imageId:
+        // - new file uploaded → newImageId
+        // - explicitly removed → undefined (will delete old in mutation)
+        // - unchanged → keep existing imageId
+        const imageId = imageFile
+          ? newImageId
+          : removeImage
+          ? undefined
+          : dishModal.editing.imageId;
+
         await updateDish({
           id: dishModal.editing._id,
           name: dishForm.name.trim(),
           description: dishForm.description || undefined,
           price,
           available: dishModal.editing.available,
+          imageId,
         });
         toast.success("Plat modifié");
       } else if (dishModal.categoryId) {
@@ -150,12 +214,15 @@ export default function MenuPage() {
           name: dishForm.name.trim(),
           description: dishForm.description || undefined,
           price,
+          imageId: newImageId,
         });
         toast.success("Plat ajouté");
       }
       setDishModal({ open: false });
     } catch {
       toast.error("Une erreur est survenue");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -166,6 +233,7 @@ export default function MenuPage() {
       description: dish.description,
       price: dish.price,
       available: !dish.available,
+      imageId: dish.imageId,
     });
   };
 
@@ -176,6 +244,9 @@ export default function MenuPage() {
 
   const getCategoryDishes = (categoryId: Id<"categories">) =>
     (dishes ?? []).filter((d) => d.categoryId === categoryId);
+
+  // Current image to display in modal
+  const currentImageSrc = imagePreview;
 
   return (
     <div className="flex flex-col">
@@ -270,22 +341,38 @@ export default function MenuPage() {
                       key={dish._id}
                       className="flex items-center justify-between px-6 py-4 hover:bg-hover-light transition-colors"
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-caption font-medium text-uber-black truncate">
-                            {dish.name}
-                          </span>
-                          {!dish.available && (
-                            <Badge variant="secondary" className="text-[11px] rounded-full">
-                              Indispo
-                            </Badge>
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        {/* Thumbnail */}
+                        {dish.imageUrl ? (
+                          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg">
+                            <Image
+                              src={dish.imageUrl}
+                              alt={dish.name}
+                              fill
+                              sizes="40px"
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="h-10 w-10 shrink-0 rounded-lg bg-chip-gray" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-caption font-medium text-uber-black truncate">
+                              {dish.name}
+                            </span>
+                            {!dish.available && (
+                              <Badge variant="secondary" className="text-[11px] rounded-full">
+                                Indispo
+                              </Badge>
+                            )}
+                          </div>
+                          {dish.description && (
+                            <p className="text-micro text-muted-gray mt-0.5 truncate max-w-xs">
+                              {dish.description}
+                            </p>
                           )}
                         </div>
-                        {dish.description && (
-                          <p className="text-micro text-muted-gray mt-0.5 truncate max-w-xs">
-                            {dish.description}
-                          </p>
-                        )}
                       </div>
                       <div className="flex items-center gap-4 ml-4">
                         <span className="text-caption font-semibold text-uber-black whitespace-nowrap">
@@ -356,7 +443,7 @@ export default function MenuPage() {
       </Dialog>
 
       {/* Dish Modal */}
-      <Dialog open={dishModal.open} onOpenChange={(o) => setDishModal({ open: o })}>
+      <Dialog open={dishModal.open} onOpenChange={(o) => { if (!uploading) setDishModal({ open: o }); }}>
         <DialogContent className="rounded-[var(--radius-xl)] max-w-sm">
           <DialogHeader>
             <DialogTitle className="font-heading text-[20px] font-bold">
@@ -364,6 +451,58 @@ export default function MenuPage() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
+            {/* Image upload */}
+            <div className="space-y-1.5">
+              <Label className="text-caption font-medium">
+                Photo <span className="text-muted-gray">(optionnel)</span>
+              </Label>
+              {currentImageSrc ? (
+                <div className="relative h-36 w-full overflow-hidden rounded-[var(--radius-lg)]">
+                  <Image
+                    src={currentImageSrc}
+                    alt="Aperçu"
+                    fill
+                    sizes="384px"
+                    className="object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={clearImage}
+                    aria-label="Supprimer la photo"
+                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
+                  >
+                    <X size={13} aria-hidden="true" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex h-24 w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-lg)] border-2 border-dashed border-border hover:border-uber-black transition-colors text-muted-gray hover:text-uber-black"
+                >
+                  <ImagePlus size={20} aria-hidden="true" />
+                  <span className="text-micro font-medium">Ajouter une photo</span>
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+                aria-label="Choisir une photo pour le plat"
+              />
+              {currentImageSrc && !imageFile && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-micro text-body-gray hover:text-uber-black underline underline-offset-2"
+                >
+                  Changer la photo
+                </button>
+              )}
+            </div>
+
             <div className="space-y-1.5">
               <Label className="text-caption font-medium">Nom du plat</Label>
               <Input
@@ -398,9 +537,10 @@ export default function MenuPage() {
             </div>
             <Button
               onClick={saveDish}
+              disabled={uploading}
               className="w-full rounded-full bg-uber-black text-white font-bold hover:bg-body-gray"
             >
-              {dishModal.editing ? "Enregistrer" : "Ajouter le plat"}
+              {uploading ? "Envoi en cours…" : dishModal.editing ? "Enregistrer" : "Ajouter le plat"}
             </Button>
           </div>
         </DialogContent>
