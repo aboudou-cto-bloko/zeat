@@ -29,16 +29,21 @@ export const create = mutation({
 
     const existing = await ctx.db
       .query("categories")
-      .withIndex("by_restaurant", (q) =>
-        q.eq("restaurantId", restaurant._id)
-      )
+      .withIndex("by_restaurant", (q) => q.eq("restaurantId", restaurant._id))
       .collect();
 
-    return ctx.db.insert("categories", {
+    const catId = await ctx.db.insert("categories", {
       restaurantId: restaurant._id,
       name: args.name,
       position: existing.length,
     });
+
+    // Keep denormalized counter in sync
+    await ctx.db.patch(restaurant._id, {
+      categoryCount: (restaurant.categoryCount ?? 0) + 1,
+    });
+
+    return catId;
   },
 });
 
@@ -56,12 +61,38 @@ export const remove = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
-    // Cascade delete dishes
+
+    const category = await ctx.db.get(args.id);
+    if (!category) return;
+
+    // Cascade delete dishes + their images
     const dishes = await ctx.db
       .query("dishes")
       .withIndex("by_category", (q) => q.eq("categoryId", args.id))
       .collect();
-    for (const dish of dishes) await ctx.db.delete(dish._id);
-    return ctx.db.delete(args.id);
+
+    const availableDeleted = dishes.filter((d) => d.available).length;
+
+    await Promise.all(
+      dishes.map(async (d) => {
+        if (d.imageId) await ctx.storage.delete(d.imageId);
+        return ctx.db.delete(d._id);
+      })
+    );
+
+    await ctx.db.delete(args.id);
+
+    // Keep denormalized counters in sync
+    const restaurant = await ctx.db.get(category.restaurantId);
+    if (restaurant) {
+      await ctx.db.patch(restaurant._id, {
+        categoryCount: Math.max(0, (restaurant.categoryCount ?? 1) - 1),
+        dishCount: Math.max(0, (restaurant.dishCount ?? dishes.length) - dishes.length),
+        availableDishCount: Math.max(
+          0,
+          (restaurant.availableDishCount ?? availableDeleted) - availableDeleted
+        ),
+      });
+    }
   },
 });

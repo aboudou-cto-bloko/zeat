@@ -153,7 +153,9 @@ export const getBySlug = query({
   },
 });
 
-// List all restaurants (public discovery page)
+// List all restaurants (public discovery page).
+// Reads denormalized counts — O(1) per restaurant instead of N+1 queries.
+// Falls back to live counts for restaurants created before the counters existed.
 export const listAll = query({
   args: {},
   handler: async (ctx) => {
@@ -162,9 +164,22 @@ export const listAll = query({
       .order("desc")
       .collect();
 
+    // Resolve branding URLs in parallel — one batch, no sequential awaits
     return Promise.all(
       restaurants.map(async (r) => {
-        const [dishes, categories, withUrls] = await Promise.all([
+        const withUrls = await withBrandingUrls(ctx, r);
+
+        // Use stored counts when available (fast path: 0 extra reads)
+        if (r.dishCount !== undefined && r.categoryCount !== undefined) {
+          return {
+            ...withUrls,
+            dishCount: r.availableDishCount ?? r.dishCount,
+            categoryCount: r.categoryCount,
+          };
+        }
+
+        // Fallback for legacy documents: compute live and patch for next time
+        const [dishes, categories] = await Promise.all([
           ctx.db
             .query("dishes")
             .withIndex("by_restaurant", (q) => q.eq("restaurantId", r._id))
@@ -173,7 +188,6 @@ export const listAll = query({
             .query("categories")
             .withIndex("by_restaurant", (q) => q.eq("restaurantId", r._id))
             .collect(),
-          withBrandingUrls(ctx, r),
         ]);
         return {
           ...withUrls,

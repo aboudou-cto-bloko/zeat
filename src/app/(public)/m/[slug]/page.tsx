@@ -3,6 +3,10 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../../../convex/_generated/api";
 import MenuClient from "./menu-client";
 
+// Revalidate the server-rendered shell every 60 s (ISR).
+// The client takes over with live Convex subscriptions after hydration.
+export const revalidate = 60;
+
 export async function generateMetadata({
   params,
 }: {

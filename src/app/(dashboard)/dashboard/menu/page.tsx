@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
+import { compressImage, IMAGE_PRESETS } from "@/lib/compress-image";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -150,8 +151,14 @@ export default function MenuPage() {
     try {
       let newImageId: Id<"_storage"> | undefined = undefined;
       if (imageFile) {
+        const compressed = await compressImage(
+          imageFile,
+          IMAGE_PRESETS.dish.maxWidth,
+          IMAGE_PRESETS.dish.maxHeight,
+          IMAGE_PRESETS.dish.quality
+        );
         const uploadUrl = await generateUploadUrl();
-        const res = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": imageFile.type }, body: imageFile });
+        const res = await fetch(uploadUrl, { method: "POST", headers: { "Content-Type": compressed.type }, body: compressed });
         if (!res.ok) throw new Error("Upload échoué");
         const { storageId } = await res.json() as { storageId: Id<"_storage"> };
         newImageId = storageId;

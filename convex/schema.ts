@@ -12,8 +12,13 @@ export default defineSchema({
     name: v.string(),
     slug: v.string(), // unique public URL identifier
     description: v.optional(v.string()),
-    logoId: v.optional(v.id("_storage")),   // 400×400, circle on storefront
-    bannerId: v.optional(v.id("_storage")), // 1280×400, full-width hero
+    logoId: v.optional(v.id("_storage")),       // 400×400, circle on storefront
+    bannerId: v.optional(v.id("_storage")),     // 1280×400, full-width hero
+    // Denormalized counters — kept in sync by dishes/categories mutations
+    // Eliminates N+1 queries in listAll. Use ?? 0 when reading.
+    dishCount: v.optional(v.number()),
+    availableDishCount: v.optional(v.number()),
+    categoryCount: v.optional(v.number()),
     createdAt: v.number(),
   })
     .index("by_user", ["userId"])
@@ -38,7 +43,16 @@ export default defineSchema({
     imageId: v.optional(v.id("_storage")),
   })
     .index("by_restaurant", ["restaurantId"])
-    .index("by_category", ["categoryId"]),
+    .index("by_category", ["categoryId"])
+    // Full-text search index — eliminates full table scan on search
+    .searchIndex("search_name", {
+      searchField: "name",
+      filterFields: ["available"],
+    })
+    .searchIndex("search_description", {
+      searchField: "description",
+      filterFields: ["available"],
+    }),
 
   // Push notification subscriptions (one per browser/device per restaurant owner)
   pushSubscriptions: defineTable({

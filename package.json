@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate-vapid-keys": "node -e \"const wp=require('web-push');const k=wp.generateVAPIDKeys();console.log('\\nVAPID_PUBLIC_KEY='+k.publicKey+'\\nVAPID_PRIVATE_KEY='+k.privateKey+'\\nNEXT_PUBLIC_VAPID_PUBLIC_KEY='+k.publicKey+'\\n');\""
   },
   "dependencies": {
     "@auth/core": "^0.37.4",

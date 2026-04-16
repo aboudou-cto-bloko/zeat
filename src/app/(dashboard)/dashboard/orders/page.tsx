@@ -1,10 +1,11 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import { usePaginatedQuery, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -31,8 +32,15 @@ type Order = {
   createdAt: number;
 };
 
+const PAGE_SIZE = 20;
+
 export default function OrdersPage() {
-  const orders = useQuery(api.orders.listByRestaurant);
+  // Paginated — loads 20 at a time, not all orders at once
+  const { results: orders, status, loadMore } = usePaginatedQuery(
+    api.orders.listPaginated,
+    {},
+    { initialNumItems: PAGE_SIZE }
+  );
   const updateStatus = useMutation(api.orders.updateStatus);
 
   const handleStatus = async (id: Id<"orders">, status: "pending" | "confirmed" | "done") => {
@@ -40,9 +48,11 @@ export default function OrdersPage() {
     toast.success("Statut mis à jour");
   };
 
-  const pending = orders?.filter((o) => o.status === "pending") ?? [];
-  const confirmed = orders?.filter((o) => o.status === "confirmed") ?? [];
-  const done = orders?.filter((o) => o.status === "done") ?? [];
+  const pending   = orders.filter((o) => o.status === "pending");
+  const confirmed = orders.filter((o) => o.status === "confirmed");
+  const done      = orders.filter((o) => o.status === "done");
+
+  const isLoading = status === "LoadingFirstPage";
 
   return (
     <div className="flex flex-col">
@@ -51,12 +61,20 @@ export default function OrdersPage() {
         description={`${pending.length} en attente · ${confirmed.length} confirmée${confirmed.length > 1 ? "s" : ""}`}
       />
 
-      <div className="p-4 sm:p-8 space-y-6 sm:space-y-8">
-        {orders?.length === 0 && (
+      <div className="p-4 sm:p-8 space-y-6 sm:space-y-8 pb-24">
+        {!isLoading && orders.length === 0 && (
           <div className="card-whisper p-8 sm:p-12 text-center">
             <p className="text-body text-muted-gray">
               Aucune commande pour l&apos;instant. Partagez votre lien menu !
             </p>
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="card-whisper p-5 animate-pulse h-28" />
+            ))}
           </div>
         )}
 
@@ -82,6 +100,18 @@ export default function OrdersPage() {
           <Section title="Terminées" count={done.length} dot="bg-chip-gray">
             {done.map((o) => <OrderCard key={o._id} order={o} />)}
           </Section>
+        )}
+
+        {status === "CanLoadMore" && (
+          <div className="flex justify-center pt-2">
+            <Button
+              variant="outline"
+              onClick={() => loadMore(PAGE_SIZE)}
+              className="rounded-full border-border text-caption font-medium"
+            >
+              Charger plus de commandes
+            </Button>
+          </div>
         )}
       </div>
     </div>

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { Search, ArrowRight, UtensilsCrossed, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/utils";
+import { useDebounce } from "@/lib/use-debounce";
 
 // ── Avatar color ──────────────────────────────────────────────────────────────
 const AVATAR_COLORS = [
@@ -192,20 +193,22 @@ export default function RestaurantsClient() {
   const [sort, setSort] = useState<SortKey>("newest");
   const [activeTab, setActiveTab] = useState<Tab>("restaurants");
 
-  const isSearching = query.trim().length >= 2;
+  // Debounce: don't fire Convex subscription on every keystroke (saves WS messages)
+  const debouncedQuery = useDebounce(query, 280);
+  const isSearching = debouncedQuery.trim().length >= 2;
 
-  // Dish search — only fires when ≥ 2 chars
+  // Dish search — only fires when debounced query ≥ 2 chars
   const dishResults = useQuery(
     api.search.dishes,
-    isSearching ? { q: query.trim() } : "skip"
+    isSearching ? { q: debouncedQuery.trim() } : "skip"
   );
 
-  // Filtered restaurants
+  // Filtered restaurants — uses debounced query to stay in sync with dish results
   const filteredRestaurants = useMemo(() => {
     if (!restaurants) return [];
     let list = [...restaurants];
     if (isSearching) {
-      const q = query.toLowerCase();
+      const q = debouncedQuery.toLowerCase();
       list = list.filter((r) => r.name.toLowerCase().includes(q) || r.description?.toLowerCase().includes(q));
     }
     switch (sort) {
@@ -216,7 +219,7 @@ export default function RestaurantsClient() {
       case "dishes":  list.sort((a, b) => b.dishCount - a.dishCount); break;
     }
     return list;
-  }, [restaurants, query, sort, isSearching]);
+  }, [restaurants, debouncedQuery, sort, isSearching]);
 
   const isLoadingRestaurants = restaurants === undefined;
   const isLoadingDishes = isSearching && dishResults === undefined;

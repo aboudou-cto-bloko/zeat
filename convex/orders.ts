@@ -1,4 +1,5 @@
 import { mutation, query } from "./_generated/server";
+import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { api } from "./_generated/api";
@@ -43,6 +44,7 @@ export const create = mutation({
   },
 });
 
+// Full list (for dashboard stats — just counts pending)
 export const listByRestaurant = query({
   args: {},
   handler: async (ctx) => {
@@ -62,6 +64,29 @@ export const listByRestaurant = query({
       )
       .order("desc")
       .collect();
+  },
+});
+
+// Paginated list — for the orders page (avoids loading all orders at once)
+export const listPaginated = query({
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return { page: [], isDone: true, continueCursor: "" };
+
+    const restaurant = await ctx.db
+      .query("restaurants")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    if (!restaurant) return { page: [], isDone: true, continueCursor: "" };
+
+    return ctx.db
+      .query("orders")
+      .withIndex("by_restaurant", (q) =>
+        q.eq("restaurantId", restaurant._id)
+      )
+      .order("desc")
+      .paginate(args.paginationOpts);
   },
 });
 

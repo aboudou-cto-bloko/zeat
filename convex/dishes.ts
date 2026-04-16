@@ -91,7 +91,7 @@ export const create = mutation({
       .withIndex("by_category", (q) => q.eq("categoryId", args.categoryId))
       .collect();
 
-    return ctx.db.insert("dishes", {
+    const dishId = await ctx.db.insert("dishes", {
       restaurantId: restaurant._id,
       categoryId: args.categoryId,
       name: args.name,
@@ -101,6 +101,14 @@ export const create = mutation({
       position: existing.length,
       imageId: args.imageId,
     });
+
+    // Keep denormalized counters in sync
+    await ctx.db.patch(restaurant._id, {
+      dishCount: (restaurant.dishCount ?? 0) + 1,
+      availableDishCount: (restaurant.availableDishCount ?? 0) + 1,
+    });
+
+    return dishId;
   },
 });
 
@@ -121,21 +129,28 @@ export const update = mutation({
     if (!dish) throw new Error("Dish not found");
 
     // Delete old image from storage if it's being replaced by a different one
-    if (
-      dish.imageId &&
-      args.imageId !== undefined &&
-      args.imageId !== dish.imageId
-    ) {
+    if (dish.imageId && args.imageId !== undefined && args.imageId !== dish.imageId) {
       await ctx.storage.delete(dish.imageId);
     }
 
-    return ctx.db.patch(args.id, {
+    await ctx.db.patch(args.id, {
       name: args.name,
       description: args.description,
       price: args.price,
       available: args.available,
       imageId: args.imageId,
     });
+
+    // Keep availableDishCount in sync if availability changed
+    if (dish.available !== args.available) {
+      const restaurant = await ctx.db.get(dish.restaurantId);
+      if (restaurant) {
+        const delta = args.available ? 1 : -1;
+        await ctx.db.patch(restaurant._id, {
+          availableDishCount: Math.max(0, (restaurant.availableDishCount ?? 0) + delta),
+        });
+      }
+    }
   },
 });
 
@@ -148,11 +163,18 @@ export const remove = mutation({
     const dish = await ctx.db.get(args.id);
     if (!dish) return;
 
-    // Delete associated image from storage
-    if (dish.imageId) {
-      await ctx.storage.delete(dish.imageId);
-    }
+    if (dish.imageId) await ctx.storage.delete(dish.imageId);
+    await ctx.db.delete(args.id);
 
-    return ctx.db.delete(args.id);
+    // Keep denormalized counters in sync
+    const restaurant = await ctx.db.get(dish.restaurantId);
+    if (restaurant) {
+      await ctx.db.patch(restaurant._id, {
+        dishCount: Math.max(0, (restaurant.dishCount ?? 1) - 1),
+        availableDishCount: dish.available
+          ? Math.max(0, (restaurant.availableDishCount ?? 1) - 1)
+          : (restaurant.availableDishCount ?? 0),
+      });
+    }
   },
 });

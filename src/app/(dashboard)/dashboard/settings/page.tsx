@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
+import { compressImage, IMAGE_PRESETS } from "@/lib/compress-image";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { useAuthActions } from "@convex-dev/auth/react";
@@ -42,17 +43,26 @@ const BANNER_SPECS = {
   displayDesc: "Hauteur : 180 px (mobile) · 240 px (desktop)",
 };
 
-// ── Upload helper ─────────────────────────────────────────────────────────────
+// ── Upload helper (compress → upload) ────────────────────────────────────────
 
 async function uploadFile(
   file: File,
-  generateUrl: () => Promise<string>
+  generateUrl: () => Promise<string>,
+  preset: keyof typeof IMAGE_PRESETS
 ): Promise<Id<"_storage">> {
+  // Compress client-side before uploading — reduces storage + bandwidth 10–30×
+  const compressed = await compressImage(
+    file,
+    IMAGE_PRESETS[preset].maxWidth,
+    IMAGE_PRESETS[preset].maxHeight,
+    IMAGE_PRESETS[preset].quality
+  );
+
   const uploadUrl = await generateUrl();
   const res = await fetch(uploadUrl, {
     method: "POST",
-    headers: { "Content-Type": file.type },
-    body: file,
+    headers: { "Content-Type": compressed.type },
+    body: compressed,
   });
   if (!res.ok) throw new Error("Upload failed");
   const { storageId } = await res.json();
@@ -298,7 +308,7 @@ export default function SettingsPage() {
   async function handleLogoUpload(file: File) {
     setUploadingLogo(true);
     try {
-      const storageId = await uploadFile(file, generateUploadUrl);
+      const storageId = await uploadFile(file, generateUploadUrl, "logo");
       await updateBranding({ logoId: storageId });
       toast.success("Logo mis à jour !");
     } catch {
@@ -311,7 +321,7 @@ export default function SettingsPage() {
   async function handleBannerUpload(file: File) {
     setUploadingBanner(true);
     try {
-      const storageId = await uploadFile(file, generateUploadUrl);
+      const storageId = await uploadFile(file, generateUploadUrl, "banner");
       await updateBranding({ bannerId: storageId });
       toast.success("Bannière mise à jour !");
     } catch {
