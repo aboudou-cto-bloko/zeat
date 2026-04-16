@@ -52,6 +52,37 @@ export const getBySlug = query({
   },
 });
 
+// List all restaurants (public discovery page)
+export const listAll = query({
+  args: {},
+  handler: async (ctx) => {
+    const restaurants = await ctx.db
+      .query("restaurants")
+      .order("desc")
+      .collect();
+
+    return Promise.all(
+      restaurants.map(async (r) => {
+        const [dishes, categories] = await Promise.all([
+          ctx.db
+            .query("dishes")
+            .withIndex("by_restaurant", (q) => q.eq("restaurantId", r._id))
+            .collect(),
+          ctx.db
+            .query("categories")
+            .withIndex("by_restaurant", (q) => q.eq("restaurantId", r._id))
+            .collect(),
+        ]);
+        return {
+          ...r,
+          dishCount: dishes.filter((d) => d.available).length,
+          categoryCount: categories.length,
+        };
+      })
+    );
+  },
+});
+
 // Update restaurant name
 export const update = mutation({
   args: { name: v.string() },
