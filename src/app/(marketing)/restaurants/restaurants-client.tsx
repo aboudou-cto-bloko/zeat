@@ -280,11 +280,6 @@ export default function RestaurantsClient() {
             <label htmlFor={searchId} className="sr-only">
               Rechercher un restaurant ou un plat
             </label>
-            <Search
-              size={16}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-gray pointer-events-none"
-              aria-hidden="true"
-            />
             <Input
               id={searchId}
               type="search"
@@ -294,10 +289,10 @@ export default function RestaurantsClient() {
               placeholder="Restaurant, plat, ingrédient…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="input-zeat pl-11 pr-10 h-12 text-[15px] w-full"
+              className="input-zeat pl-4 pr-11 h-12 text-[15px] w-full"
               style={{ touchAction: "manipulation" }}
             />
-            {query && (
+            {query ? (
               <button
                 type="button"
                 onClick={clearSearch}
@@ -306,6 +301,12 @@ export default function RestaurantsClient() {
               >
                 <X size={12} className="text-uber-black" aria-hidden="true" />
               </button>
+            ) : (
+              <Search
+                size={16}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-gray pointer-events-none"
+                aria-hidden="true"
+              />
             )}
           </div>
         </div>
