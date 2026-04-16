@@ -326,7 +326,7 @@ export default function MenuPage() {
 
       {/* Category Modal */}
       <Dialog open={catModal.open} onOpenChange={(o) => setCatModal({ open: o })}>
-        <DialogContent className="rounded-[var(--radius-xl)] max-w-sm mx-4">
+        <DialogContent className="rounded-[var(--radius-xl)]">
           <DialogHeader>
             <DialogTitle className="font-heading text-[20px] font-bold">
               {catModal.editing ? "Modifier la catégorie" : "Nouvelle catégorie"}
@@ -349,7 +349,7 @@ export default function MenuPage() {
 
       {/* Dish Modal */}
       <Dialog open={dishModal.open} onOpenChange={(o) => { if (!uploading) setDishModal({ open: o }); }}>
-        <DialogContent className="rounded-[var(--radius-xl)] max-w-sm mx-4 max-h-[90vh] overflow-y-auto">
+        <DialogContent className="rounded-[var(--radius-xl)] max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-heading text-[20px] font-bold">
               {dishModal.editing ? "Modifier le plat" : "Nouveau plat"}
