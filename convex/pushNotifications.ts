@@ -2,7 +2,7 @@
 
 import { action } from "./_generated/server";
 import { v } from "convex/values";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import webpush from "web-push";
 
 /**
@@ -29,7 +29,7 @@ export const sendOrderNotification = action({
     if (!restaurant) return;
 
     const subscriptions = await ctx.runQuery(
-      api.pushSubscriptions.listByUserId,
+      internal.pushSubscriptions.listByUserId,
       { userId: restaurant.userId }
     );
     if (!subscriptions.length) return;

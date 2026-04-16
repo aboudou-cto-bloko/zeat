@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { requireOwnership } from "./lib";
 
 export const list = query({
   args: { restaurantId: v.id("restaurants") },
@@ -52,6 +53,9 @@ export const update = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+    const category = await ctx.db.get(args.id);
+    if (!category) throw new Error("Category not found");
+    await requireOwnership(ctx, userId, category.restaurantId);
     return ctx.db.patch(args.id, { name: args.name });
   },
 });
@@ -64,6 +68,7 @@ export const remove = mutation({
 
     const category = await ctx.db.get(args.id);
     if (!category) return;
+    await requireOwnership(ctx, userId, category.restaurantId);
 
     // Cascade delete dishes + their images
     const dishes = await ctx.db

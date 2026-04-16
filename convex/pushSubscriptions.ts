@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
@@ -58,7 +58,7 @@ export const listMine = query({
   },
 });
 
-export const listByUserId = query({
+export const listByUserId = internalQuery({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
     return ctx.db

@@ -3,6 +3,7 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { api } from "./_generated/api";
+import { requireOwnership } from "./lib";
 
 export const create = mutation({
   args: {
@@ -21,13 +22,24 @@ export const create = mutation({
     total: v.number(),
   },
   handler: async (ctx, args) => {
+    // Recompute prices server-side — never trust client-supplied amounts
+    const resolvedItems = await Promise.all(
+      args.items.map(async (item) => {
+        const dish = await ctx.db.get(item.dishId);
+        if (!dish || dish.restaurantId !== args.restaurantId)
+          throw new Error(`Invalid dish: ${item.dishId}`);
+        return { ...item, dishName: dish.name, unitPrice: dish.price };
+      })
+    );
+    const total = resolvedItems.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
+
     const orderId = await ctx.db.insert("orders", {
       restaurantId: args.restaurantId,
       customerName: args.customerName,
       customerPhone: args.customerPhone,
       note: args.note,
-      items: args.items,
-      total: args.total,
+      items: resolvedItems,
+      total,
       status: "pending",
       createdAt: Date.now(),
     });
@@ -102,6 +114,9 @@ export const updateStatus = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+    const order = await ctx.db.get(args.id);
+    if (!order) throw new Error("Order not found");
+    await requireOwnership(ctx, userId, order.restaurantId);
     return ctx.db.patch(args.id, { status: args.status });
   },
 });

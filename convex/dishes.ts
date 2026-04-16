@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { requireOwnership } from "./lib";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -127,6 +128,7 @@ export const update = mutation({
 
     const dish = await ctx.db.get(args.id);
     if (!dish) throw new Error("Dish not found");
+    await requireOwnership(ctx, userId, dish.restaurantId);
 
     // Delete old image from storage if it's being replaced by a different one
     if (dish.imageId && args.imageId !== undefined && args.imageId !== dish.imageId) {
@@ -162,6 +164,7 @@ export const remove = mutation({
 
     const dish = await ctx.db.get(args.id);
     if (!dish) return;
+    await requireOwnership(ctx, userId, dish.restaurantId);
 
     if (dish.imageId) await ctx.storage.delete(dish.imageId);
     await ctx.db.delete(args.id);
