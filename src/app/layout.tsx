@@ -34,7 +34,7 @@ export default function RootLayout({
       lang="fr"
       className={`${plusJakarta.variable} ${manrope.variable}`}
     >
-      <body className="min-h-screen bg-background antialiased">
+      <body className="min-h-screen bg-background antialiased" suppressHydrationWarning>
         <ConvexAuthNextjsServerProvider>
           <ConvexClientProvider>
             {children}
