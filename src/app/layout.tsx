@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Manrope } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -34,9 +35,11 @@ export default function RootLayout({
       className={`${plusJakarta.variable} ${manrope.variable}`}
     >
       <body className="min-h-screen bg-background antialiased">
-        <ConvexClientProvider>
-          {children}
-        </ConvexClientProvider>
+        <ConvexAuthNextjsServerProvider>
+          <ConvexClientProvider>
+            {children}
+          </ConvexClientProvider>
+        </ConvexAuthNextjsServerProvider>
         <Toaster position="top-right" richColors />
       </body>
     </html>
