@@ -25,17 +25,11 @@ export default function DashboardPage() {
 
   const pendingOrders = orders?.filter((o) => o.status === "pending").length ?? 0;
 
-  const [notifStatus, setNotifStatus] = useState<"unknown" | "granted" | "denied" | "unsupported">("unknown");
-
-  useEffect(() => {
-    if (!("Notification" in window)) {
-      setNotifStatus("unsupported");
-      return;
-    }
+  const [notifStatus, setNotifStatus] = useState<"unknown" | "granted" | "denied" | "unsupported">(() => {
+    if (typeof window === "undefined" || !("Notification" in window)) return "unsupported";
     const perm = Notification.permission;
-    const next = perm === "granted" ? "granted" : perm === "denied" ? "denied" : "unknown";
-    setNotifStatus(next);
-  }, []);
+    return perm === "granted" ? "granted" : perm === "denied" ? "denied" : "unknown";
+  });
 
   async function handleEnableNotifications() {
     const granted = await requestPushPermission();
