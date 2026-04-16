@@ -190,7 +190,7 @@ function OrderCard({
             {onConfirm && (
               <button
                 onClick={onConfirm}
-                className="rounded-full bg-uber-black text-pure-white text-micro font-bold px-4 py-2 hover:bg-body-gray transition-colors"
+                className="rounded-full bg-uber-black text-white text-micro font-bold px-4 py-2 hover:bg-body-gray transition-colors"
               >
                 Confirmer
               </button>

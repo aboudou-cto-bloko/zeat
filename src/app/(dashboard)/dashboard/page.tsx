@@ -42,7 +42,7 @@ export default function DashboardPage() {
               Ajoutez des catégories et des plats pour que vos clients puissent passer commande.
             </p>
             <Link href="/dashboard/menu">
-              <Button className="rounded-full bg-uber-black text-pure-white font-bold px-6 hover:bg-body-gray">
+              <Button className="rounded-full bg-uber-black text-white font-bold px-6 hover:bg-body-gray">
                 Ajouter une catégorie
                 <ArrowRight size={16} className="ml-2" />
               </Button>
@@ -149,7 +149,7 @@ function StatCard({
         }`}
       >
         <div className="flex items-center justify-between mb-3">
-          <div className={`flex h-8 w-8 items-center justify-center rounded-full ${highlight ? "bg-uber-black text-pure-white" : "bg-chip-gray text-uber-black"}`}>
+          <div className={`flex h-8 w-8 items-center justify-center rounded-full ${highlight ? "bg-uber-black text-white" : "bg-chip-gray text-uber-black"}`}>
             {icon}
           </div>
         </div>

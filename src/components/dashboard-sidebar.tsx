@@ -57,7 +57,7 @@ export function DashboardSidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-2.5 text-caption font-medium transition-colors",
                 isActive
-                  ? "bg-uber-black text-pure-white"
+                  ? "bg-uber-black text-white"
                   : "text-body-gray hover:bg-chip-gray hover:text-uber-black"
               )}
             >

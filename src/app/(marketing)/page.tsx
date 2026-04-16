@@ -17,7 +17,7 @@ export default function LandingPage() {
             </Button>
           </Link>
           <Link href="/signup">
-            <Button className="rounded-full bg-uber-black text-pure-white font-bold px-5 text-caption hover:bg-body-gray">
+            <Button className="rounded-full bg-uber-black text-white font-bold px-5 text-caption hover:bg-body-gray">
               Créer mon menu
             </Button>
           </Link>
@@ -40,7 +40,7 @@ export default function LandingPage() {
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <Link href="/signup">
-              <Button className="rounded-full bg-uber-black text-pure-white font-bold px-8 py-3 text-body hover:bg-body-gray gap-2">
+              <Button className="rounded-full bg-uber-black text-white font-bold px-8 py-3 text-body hover:bg-body-gray gap-2">
                 Créer mon menu gratuitement
                 <ArrowRight size={16} />
               </Button>
@@ -79,7 +79,7 @@ export default function LandingPage() {
               },
             ].map((f) => (
               <div key={f.title} className="card-whisper p-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-uber-black text-pure-white mb-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-uber-black text-white mb-4">
                   {f.icon}
                 </div>
                 <h3 className="text-caption font-semibold text-uber-black mb-2">{f.title}</h3>
@@ -100,7 +100,7 @@ export default function LandingPage() {
             Gratuit. Sans carte bancaire. Sans commission.
           </p>
           <Link href="/signup">
-            <Button className="rounded-full bg-uber-black text-pure-white font-bold px-10 py-4 text-body hover:bg-body-gray gap-2">
+            <Button className="rounded-full bg-uber-black text-white font-bold px-10 py-4 text-body hover:bg-body-gray gap-2">
               Commencer maintenant
               <ArrowRight size={16} />
             </Button>
@@ -110,7 +110,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="bg-uber-black py-8 px-8 text-center">
-        <span className="font-heading text-[18px] font-bold text-pure-white tracking-tighter">
+        <span className="font-heading text-[18px] font-bold text-white tracking-tighter">
           Zeat
         </span>
         <p className="text-micro text-muted-gray mt-2">Le menu. Distillé.</p>

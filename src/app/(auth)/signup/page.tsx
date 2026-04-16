@@ -73,7 +73,9 @@ export default function SignupPage() {
               </Label>
               <Input
                 id="name"
-                placeholder="Ex : Chez Aminata"
+                name="organization"
+                autoComplete="organization"
+                placeholder="Ex : Chez Aminata…"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 className="input-zeat"
@@ -87,7 +89,10 @@ export default function SignupPage() {
               </Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
+                autoComplete="email"
+                spellCheck={false}
                 placeholder="vous@exemple.com"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -102,7 +107,9 @@ export default function SignupPage() {
               </Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
+                autoComplete="new-password"
                 placeholder="8 caractères minimum"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -115,7 +122,7 @@ export default function SignupPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full rounded-full bg-uber-black text-pure-white font-bold py-3 hover:bg-body-gray transition-colors"
+              className="w-full rounded-full bg-uber-black text-white font-bold py-3 hover:bg-body-gray transition-colors"
             >
               {loading ? "Création en cours…" : "Créer mon compte"}
             </Button>

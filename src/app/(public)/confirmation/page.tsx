@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function ConfirmationPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center bg-zeat-beige">
-      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-uber-black text-pure-white">
+      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-uber-black text-white">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
           <polyline points="20 6 9 17 4 12" />
         </svg>

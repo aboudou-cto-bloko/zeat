@@ -185,7 +185,7 @@ export default function MenuPage() {
         actions={
           <Button
             onClick={openAddCategory}
-            className="rounded-full bg-uber-black text-pure-white font-bold text-caption px-5 hover:bg-body-gray"
+            className="rounded-full bg-uber-black text-white font-bold text-caption px-5 hover:bg-body-gray"
           >
             <Plus size={14} className="mr-1.5" />
             Catégorie
@@ -199,7 +199,7 @@ export default function MenuPage() {
             <p className="text-body text-muted-gray mb-4">Aucune catégorie pour l&apos;instant.</p>
             <Button
               onClick={openAddCategory}
-              className="rounded-full bg-uber-black text-pure-white font-bold px-6 hover:bg-body-gray"
+              className="rounded-full bg-uber-black text-white font-bold px-6 hover:bg-body-gray"
             >
               <Plus size={14} className="mr-1.5" />
               Ajouter une catégorie
@@ -216,6 +216,8 @@ export default function MenuPage() {
               <div className="flex items-center justify-between px-6 py-4">
                 <button
                   onClick={() => toggleExpanded(cat._id)}
+                  aria-expanded={isOpen}
+                  aria-label={`${isOpen ? "Réduire" : "Développer"} la catégorie ${cat.name}`}
                   className="flex items-center gap-3 flex-1 text-left"
                 >
                   {isOpen ? (
@@ -240,15 +242,17 @@ export default function MenuPage() {
                   </Button>
                   <button
                     onClick={() => openEditCategory(cat)}
+                    aria-label={`Modifier la catégorie ${cat.name}`}
                     className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-chip-gray text-muted-gray hover:text-uber-black transition-colors"
                   >
-                    <Pencil size={13} />
+                    <Pencil size={13} aria-hidden="true" />
                   </button>
                   <button
                     onClick={() => deleteCategory(cat._id)}
+                    aria-label={`Supprimer la catégorie ${cat.name}`}
                     className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-red-50 text-muted-gray hover:text-red-600 transition-colors"
                   >
-                    <Trash2 size={13} />
+                    <Trash2 size={13} aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -292,22 +296,24 @@ export default function MenuPage() {
                           className={`text-micro rounded-full px-3 py-1 font-medium transition-colors ${
                             dish.available
                               ? "bg-chip-gray text-body-gray hover:bg-hover-gray"
-                              : "bg-uber-black text-pure-white hover:bg-body-gray"
+                              : "bg-uber-black text-white hover:bg-body-gray"
                           }`}
                         >
                           {dish.available ? "Dispo" : "Remettre dispo"}
                         </button>
                         <button
                           onClick={() => openEditDish(dish)}
+                          aria-label={`Modifier ${dish.name}`}
                           className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-chip-gray text-muted-gray hover:text-uber-black transition-colors"
                         >
-                          <Pencil size={13} />
+                          <Pencil size={13} aria-hidden="true" />
                         </button>
                         <button
                           onClick={() => deleteDish(dish._id)}
+                          aria-label={`Supprimer ${dish.name}`}
                           className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-red-50 text-muted-gray hover:text-red-600 transition-colors"
                         >
-                          <Trash2 size={13} />
+                          <Trash2 size={13} aria-hidden="true" />
                         </button>
                       </div>
                     </div>
@@ -341,7 +347,7 @@ export default function MenuPage() {
             </div>
             <Button
               onClick={saveCategory}
-              className="w-full rounded-full bg-uber-black text-pure-white font-bold hover:bg-body-gray"
+              className="w-full rounded-full bg-uber-black text-white font-bold hover:bg-body-gray"
             >
               {catModal.editing ? "Enregistrer" : "Créer la catégorie"}
             </Button>
@@ -392,7 +398,7 @@ export default function MenuPage() {
             </div>
             <Button
               onClick={saveDish}
-              className="w-full rounded-full bg-uber-black text-pure-white font-bold hover:bg-body-gray"
+              className="w-full rounded-full bg-uber-black text-white font-bold hover:bg-body-gray"
             >
               {dishModal.editing ? "Enregistrer" : "Ajouter le plat"}
             </Button>

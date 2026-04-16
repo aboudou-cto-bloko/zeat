@@ -147,7 +147,7 @@ export default function PublicMenuPage({
       {/* Hero */}
       <header className="border-b border-black/10 bg-zeat-beige px-6 py-8">
         <div className="mx-auto max-w-2xl">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-uber-black text-pure-white font-heading text-[20px] font-bold mb-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-uber-black text-white font-heading text-[20px] font-bold mb-4">
             {restaurant.name.charAt(0).toUpperCase()}
           </div>
           <h1 className="text-headline-md text-uber-black">{restaurant.name}</h1>
@@ -163,7 +163,7 @@ export default function PublicMenuPage({
               <button
                 onClick={() => setActiveCategory(null)}
                 className={`pill-chip shrink-0 text-caption transition-colors ${
-                  activeCategory === null ? "bg-uber-black text-pure-white" : ""
+                  activeCategory === null ? "bg-uber-black text-white" : ""
                 }`}
               >
                 Tout
@@ -173,7 +173,7 @@ export default function PublicMenuPage({
                   key={cat._id}
                   onClick={() => setActiveCategory(cat._id)}
                   className={`pill-chip shrink-0 text-caption transition-colors ${
-                    activeCategory === cat._id ? "bg-uber-black text-pure-white" : ""
+                    activeCategory === cat._id ? "bg-uber-black text-white" : ""
                   }`}
                 >
                   {cat.name}
@@ -227,7 +227,7 @@ export default function PublicMenuPage({
                               </span>
                               <button
                                 onClick={() => updateQty(dish._id, 1)}
-                                className="flex h-8 w-8 items-center justify-center rounded-full bg-uber-black text-pure-white hover:bg-body-gray transition-colors"
+                                className="flex h-8 w-8 items-center justify-center rounded-full bg-uber-black text-white hover:bg-body-gray transition-colors"
                               >
                                 <Plus size={13} />
                               </button>
@@ -235,7 +235,7 @@ export default function PublicMenuPage({
                           ) : (
                             <button
                               onClick={() => addToCart(dish)}
-                              className="flex h-9 w-9 items-center justify-center rounded-full bg-uber-black text-pure-white hover:bg-body-gray transition-colors shadow-[var(--shadow-float)]"
+                              className="flex h-9 w-9 items-center justify-center rounded-full bg-uber-black text-white hover:bg-body-gray transition-colors shadow-[var(--shadow-float)]"
                             >
                               <Plus size={16} />
                             </button>
@@ -261,7 +261,7 @@ export default function PublicMenuPage({
         <div className="fixed bottom-6 left-0 right-0 flex justify-center px-6 z-20">
           <button
             onClick={() => setCartOpen(true)}
-            className="flex items-center gap-3 rounded-full bg-uber-black text-pure-white px-6 py-4 shadow-[var(--shadow-medium)] hover:bg-body-gray transition-colors"
+            className="flex items-center gap-3 rounded-full bg-uber-black text-white px-6 py-4 shadow-[var(--shadow-medium)] hover:bg-body-gray transition-colors"
           >
             <ShoppingCart size={18} />
             <span className="font-bold text-caption">
@@ -296,7 +296,7 @@ export default function PublicMenuPage({
                   <span className="text-caption font-bold w-5 text-center">{item.quantity}</span>
                   <button
                     onClick={() => updateQty(item.dishId, 1)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-uber-black text-pure-white hover:bg-body-gray"
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-uber-black text-white hover:bg-body-gray"
                   >
                     <Plus size={13} />
                   </button>
@@ -316,7 +316,7 @@ export default function PublicMenuPage({
           </div>
           <Button
             onClick={() => { setCartOpen(false); setCheckoutOpen(true); }}
-            className="w-full mt-4 rounded-full bg-uber-black text-pure-white font-bold py-3 hover:bg-body-gray"
+            className="w-full mt-4 rounded-full bg-uber-black text-white font-bold py-3 hover:bg-body-gray"
           >
             Commander
             <ArrowRight size={16} className="ml-2" />
@@ -375,7 +375,7 @@ export default function PublicMenuPage({
             <Button
               onClick={handleOrder}
               disabled={ordering}
-              className="w-full rounded-full bg-uber-black text-pure-white font-bold py-3 hover:bg-body-gray"
+              className="w-full rounded-full bg-uber-black text-white font-bold py-3 hover:bg-body-gray"
             >
               {ordering ? "Envoi en cours…" : "Confirmer la commande"}
             </Button>

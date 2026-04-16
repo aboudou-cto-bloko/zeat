@@ -25,7 +25,7 @@ export function DashboardHeader({ title, description, actions }: DashboardHeader
       <div className="flex items-center gap-3">
         {actions}
         {restaurant && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-uber-black text-pure-white text-micro font-bold">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-uber-black text-white text-micro font-bold">
             {restaurant.name.charAt(0).toUpperCase()}
           </div>
         )}
