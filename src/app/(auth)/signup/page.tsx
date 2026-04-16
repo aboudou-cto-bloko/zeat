@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useMutation } from "convex/react";
+import { useConvexAuth, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -81,12 +81,27 @@ function PasswordStrength({ password }: { password: string }) {
 
 export default function SignupPage() {
   const { signIn } = useAuthActions();
+  const { isAuthenticated } = useConvexAuth();
   const createRestaurant = useMutation(api.restaurants.create);
   const router = useRouter();
 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [pendingSetup, setPendingSetup] = useState<{ name: string; slug: string } | null>(null);
+
+  // Run restaurant creation only once the Convex client confirms auth is ready
+  useEffect(() => {
+    if (!isAuthenticated || !pendingSetup) return;
+    setPendingSetup(null);
+    createRestaurant(pendingSetup)
+      .then(() => router.push("/dashboard"))
+      .catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : "Une erreur est survenue.";
+        toast.error(message);
+        setLoading(false);
+      });
+  }, [isAuthenticated, pendingSetup]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,13 +116,11 @@ export default function SignupPage() {
       });
 
       const slug = slugify(form.name) + "-" + Math.random().toString(36).slice(2, 6);
-      await createRestaurant({ name: form.name, slug });
-
-      router.push("/dashboard");
+      setPendingSetup({ name: form.name, slug });
+      // createRestaurant is called by the useEffect above once isAuthenticated is true
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Une erreur est survenue.";
       toast.error(message.includes("exists") ? "Cet email est déjà utilisé." : message);
-    } finally {
       setLoading(false);
     }
   };
