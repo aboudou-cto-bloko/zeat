@@ -1,4 +1,9 @@
+import type { Metadata } from "next";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default function DashboardLayout({
   children,

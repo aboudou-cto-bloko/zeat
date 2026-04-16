@@ -1,6 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, Link2, ClipboardList } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Zeat — Le menu. Distillé.",
+  description:
+    "Créez votre menu digital en 60 secondes. Partagez le lien à vos clients et recevez les commandes directement — sans commission ni plateforme.",
+  openGraph: {
+    title: "Zeat — Votre menu digital. En 60 secondes.",
+    description:
+      "Créez votre menu, partagez le lien, recevez les commandes. Zéro commission. Zéro plateforme.",
+    url: "/",
+  },
+};
 
 export default function LandingPage() {
   return (
