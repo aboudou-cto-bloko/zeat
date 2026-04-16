@@ -198,7 +198,7 @@ export default async function LandingPage() {
               </div>
 
               {/* Floating notification badge */}
-              <div className="absolute -top-4 -right-5 rounded-2xl bg-pure-white shadow-[var(--shadow-float)] border border-border px-3 py-2 flex items-center gap-2">
+              <div className="absolute top-[80px] -right-8 z-20 rounded-2xl bg-pure-white shadow-[var(--shadow-float)] border border-border px-3 py-2 flex items-center gap-2">
                 <div className="flex h-7 w-7 items-center justify-center rounded-full bg-uber-black shrink-0">
                   <BellRing size={12} className="text-white" />
                 </div>
