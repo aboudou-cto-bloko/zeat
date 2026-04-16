@@ -13,6 +13,7 @@ import {
   Search,
   Star,
 } from "lucide-react";
+import { AnimateMount, AnimateIn, AnimatePhone } from "@/components/animate-in";
 
 export const metadata: Metadata = {
   title: "Zeat — Le menu. Distillé.",
@@ -113,59 +114,70 @@ export default async function LandingPage() {
         <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 py-16 sm:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left: copy */}
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-uber-black/8 px-4 py-2 text-micro font-semibold text-uber-black mb-6">
-              <span
-                className="h-1.5 w-1.5 rounded-full bg-uber-black shrink-0"
-                aria-hidden="true"
-              />
-              Sans commission · Sans plateforme
-            </div>
+            <AnimateMount delay={0}>
+              <div className="inline-flex items-center gap-2 rounded-full bg-uber-black/8 px-4 py-2 text-micro font-semibold text-uber-black mb-6">
+                <span
+                  className="h-1.5 w-1.5 rounded-full bg-uber-black shrink-0"
+                  aria-hidden="true"
+                />
+                Sans commission · Sans plateforme
+              </div>
+            </AnimateMount>
 
-            <h1 className="text-headline-lg sm:text-display text-uber-black mb-5 text-pretty leading-[1.1]">
-              Vos clients commandent.
-              <br />
-              <span className="text-muted-gray">Vous encaissez.</span>
-            </h1>
+            <AnimateMount delay={0.08}>
+              <h1 className="text-headline-lg sm:text-display text-uber-black mb-5 text-pretty leading-[1.1]">
+                Vos clients commandent.
+                <br />
+                <span className="text-muted-gray">Vous encaissez.</span>
+              </h1>
+            </AnimateMount>
 
-            <p className="text-body text-body-gray max-w-md mb-8 leading-relaxed">
-              Créez votre menu digital en 60 secondes, partagez le lien ou le QR
-              code — vos clients commandent directement depuis leur téléphone,
-              sans passer par une plateforme.
-            </p>
+            <AnimateMount delay={0.15}>
+              <p className="text-body text-body-gray max-w-md mb-8 leading-relaxed">
+                Créez votre menu digital en 60 secondes, partagez le lien ou le QR
+                code — vos clients commandent directement depuis leur téléphone,
+                sans passer par une plateforme.
+              </p>
+            </AnimateMount>
 
-            <div className="flex flex-wrap gap-3">
-              <Link href="/signup">
-                <Button className="rounded-full bg-uber-black text-white font-bold px-7 py-3 text-caption hover:bg-body-gray gap-2 h-auto">
-                  Créer mon menu gratuitement
-                  <ArrowRight size={15} aria-hidden="true" />
-                </Button>
-              </Link>
-              <Link href="/restaurants">
-                <Button
-                  variant="outline"
-                  className="rounded-full border-uber-black/20 text-caption font-medium text-body-gray hover:border-uber-black hover:text-uber-black px-6 py-3 h-auto transition-colors"
-                >
-                  Explorer les menus
-                </Button>
-              </Link>
-            </div>
+            <AnimateMount delay={0.22}>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/signup">
+                  <Button className="rounded-full bg-uber-black text-white font-bold px-7 py-3 text-caption hover:bg-body-gray gap-2 h-auto">
+                    Créer mon menu gratuitement
+                    <ArrowRight size={15} aria-hidden="true" />
+                  </Button>
+                </Link>
+                <Link href="/restaurants">
+                  <Button
+                    variant="outline"
+                    className="rounded-full border-uber-black/20 text-caption font-medium text-body-gray hover:border-uber-black hover:text-uber-black px-6 py-3 h-auto transition-colors"
+                  >
+                    Explorer les menus
+                  </Button>
+                </Link>
+              </div>
+            </AnimateMount>
 
-            <p className="text-micro text-muted-gray mt-5">
-              Gratuit. Sans carte bancaire.
-              {count > 0 && (
-                <>
-                  {" "}
-                  ·{" "}
-                  <strong className="text-uber-black font-semibold">
-                    {count} restaurant{count > 1 ? "s" : ""}
-                  </strong>{" "}
-                  déjà sur Zeat.
-                </>
-              )}
-            </p>
+            <AnimateMount delay={0.28}>
+              <p className="text-micro text-muted-gray mt-5">
+                Gratuit. Sans carte bancaire.
+                {count > 0 && (
+                  <>
+                    {" "}
+                    ·{" "}
+                    <strong className="text-uber-black font-semibold">
+                      {count} restaurant{count > 1 ? "s" : ""}
+                    </strong>{" "}
+                    déjà sur Zeat.
+                  </>
+                )}
+              </p>
+            </AnimateMount>
           </div>
 
           {/* Right: iPhone 15 with real app screenshot */}
+          <AnimatePhone>
           <div
             className="relative flex justify-center lg:justify-end"
             aria-hidden="true"
@@ -221,6 +233,7 @@ export default async function LandingPage() {
               </div>
             </div>
           </div>
+          </AnimatePhone>
         </div>
       </section>
 
@@ -235,16 +248,18 @@ export default async function LandingPage() {
               value: count > 0 ? `${count}+` : "✓",
               label: count > 0 ? "restaurants actifs" : "Gratuit à démarrer",
             },
-          ].map((s) => (
-            <div key={s.label}>
-              <p
-                className="font-heading text-[28px] sm:text-[32px] font-bold text-white leading-none"
-                style={{ fontVariantNumeric: "tabular-nums" }}
-              >
-                {s.value}
-              </p>
-              <p className="text-micro text-muted-gray mt-1">{s.label}</p>
-            </div>
+          ].map((s, i) => (
+            <AnimateIn key={s.label} delay={i * 0.07}>
+              <div>
+                <p
+                  className="font-heading text-[28px] sm:text-[32px] font-bold text-white leading-none"
+                  style={{ fontVariantNumeric: "tabular-nums" }}
+                >
+                  {s.value}
+                </p>
+                <p className="text-micro text-muted-gray mt-1">{s.label}</p>
+              </div>
+            </AnimateIn>
           ))}
         </div>
       </div>
@@ -252,16 +267,19 @@ export default async function LandingPage() {
       {/* ── Audience split (Uber Eats: 3 cartes éditoriales → Zeat: 2 audiences) */}
       <section className="py-20 sm:py-24 px-5 sm:px-8 bg-pure-white">
         <div className="mx-auto max-w-5xl">
-          <h2 className="text-headline-md text-uber-black text-center mb-3 text-pretty">
-            Une solution pour chacun
-          </h2>
-          <p className="text-body text-muted-gray text-center mb-12 max-w-md mx-auto">
-            Que vous soyez restaurateur ou client, Zeat simplifie
-            l&apos;expérience de bout en bout.
-          </p>
+          <AnimateIn>
+            <h2 className="text-headline-md text-uber-black text-center mb-3 text-pretty">
+              Une solution pour chacun
+            </h2>
+            <p className="text-body text-muted-gray text-center mb-12 max-w-md mx-auto">
+              Que vous soyez restaurateur ou client, Zeat simplifie
+              l&apos;expérience de bout en bout.
+            </p>
+          </AnimateIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {/* Card: restaurateurs */}
+            <AnimateIn delay={0.05}>
             <Link
               href="/signup"
               className="group relative overflow-hidden rounded-[var(--radius-xl)] bg-uber-black p-8 sm:p-10 flex flex-col justify-between min-h-[280px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -303,8 +321,10 @@ export default async function LandingPage() {
                 />
               </div>
             </Link>
+            </AnimateIn>
 
             {/* Card: clients */}
+            <AnimateIn delay={0.15}>
             <Link
               href="/restaurants"
               className="group relative overflow-hidden rounded-[var(--radius-xl)] bg-zeat-beige p-8 sm:p-10 flex flex-col justify-between min-h-[280px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -338,6 +358,7 @@ export default async function LandingPage() {
                 />
               </div>
             </Link>
+            </AnimateIn>
           </div>
         </div>
       </section>
@@ -345,12 +366,14 @@ export default async function LandingPage() {
       {/* ── Comment ça marche (Uber Eats: implicite → Zeat: explicite numbered) */}
       <section className="py-20 sm:py-24 px-5 sm:px-8 bg-zeat-beige">
         <div className="mx-auto max-w-4xl">
-          <p className="text-micro font-semibold text-muted-gray uppercase tracking-widest text-center mb-3">
-            Simple comme bonjour
-          </p>
-          <h2 className="text-headline-md text-uber-black text-center mb-14 text-pretty">
-            Votre menu en ligne en 3 étapes
-          </h2>
+          <AnimateIn>
+            <p className="text-micro font-semibold text-muted-gray uppercase tracking-widest text-center mb-3">
+              Simple comme bonjour
+            </p>
+            <h2 className="text-headline-md text-uber-black text-center mb-14 text-pretty">
+              Votre menu en ligne en 3 étapes
+            </h2>
+          </AnimateIn>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 relative">
             {/* Connector line (desktop) */}
@@ -378,8 +401,9 @@ export default async function LandingPage() {
                 title: "Recevez les commandes",
                 desc: "Chaque commande vous est notifiée par push et email, en temps réel, directement dans votre dashboard.",
               },
-            ].map((step) => (
-              <div key={step.n} className="relative flex flex-col items-start">
+            ].map((step, i) => (
+              <AnimateIn key={step.n} delay={i * 0.1}>
+              <div className="relative flex flex-col items-start">
                 <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-uber-black text-white mb-5 shadow-[var(--shadow-float)]">
                   {step.icon}
                 </div>
@@ -393,6 +417,7 @@ export default async function LandingPage() {
                   {step.desc}
                 </p>
               </div>
+              </AnimateIn>
             ))}
           </div>
 
@@ -414,28 +439,31 @@ export default async function LandingPage() {
       {featured.length > 0 && (
         <section className="py-20 sm:py-24 px-5 sm:px-8 bg-pure-white">
           <div className="mx-auto max-w-5xl">
-            <div className="flex items-end justify-between gap-4 mb-10">
-              <div>
-                <p className="text-micro font-semibold text-muted-gray uppercase tracking-widest mb-2">
-                  Déjà sur Zeat
-                </p>
-                <h2 className="text-headline-md text-uber-black text-pretty">
-                  Découvrez les restaurants
-                </h2>
+            <AnimateIn>
+              <div className="flex items-end justify-between gap-4 mb-10">
+                <div>
+                  <p className="text-micro font-semibold text-muted-gray uppercase tracking-widest mb-2">
+                    Déjà sur Zeat
+                  </p>
+                  <h2 className="text-headline-md text-uber-black text-pretty">
+                    Découvrez les restaurants
+                  </h2>
+                </div>
+                <Link
+                  href="/restaurants"
+                  className="hidden sm:flex items-center gap-1.5 text-caption font-semibold text-uber-black hover:underline underline-offset-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                >
+                  Voir tous
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
               </div>
-              <Link
-                href="/restaurants"
-                className="hidden sm:flex items-center gap-1.5 text-caption font-semibold text-uber-black hover:underline underline-offset-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
-              >
-                Voir tous
-                <ArrowRight size={14} aria-hidden="true" />
-              </Link>
-            </div>
+            </AnimateIn>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {featured.map((r) => {
+              {featured.map((r, i) => {
                 const color = avatarColor(r.name);
                 return (
+                  <AnimateIn key={r._id} delay={i * 0.1}>
                   <Link
                     key={r._id}
                     href={`/m/${r.slug}`}
@@ -506,6 +534,7 @@ export default async function LandingPage() {
                       </div>
                     </div>
                   </Link>
+                  </AnimateIn>
                 );
               })}
             </div>
@@ -527,6 +556,7 @@ export default async function LandingPage() {
 
       {/* ── Final CTA ─────────────────────────────────────────────────────── */}
       <section className="bg-uber-black py-20 sm:py-28 px-5 sm:px-8 text-center">
+        <AnimateIn>
         <div className="mx-auto max-w-2xl">
           <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-4">
             Rejoignez Zeat
@@ -555,6 +585,7 @@ export default async function LandingPage() {
             </Link>
           </div>
         </div>
+        </AnimateIn>
       </section>
 
       {/* ── Footer (Uber Eats: multi-col → Zeat: 3 colonnes + tagline) ──── */}
