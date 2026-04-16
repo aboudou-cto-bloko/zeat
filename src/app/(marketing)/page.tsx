@@ -109,6 +109,7 @@ export default async function LandingPage() {
         </div>
       </nav>
 
+      <main>
       {/* ── Hero — split layout (Uber Eats structure, Zeat identity) ──── */}
       <section className="min-h-screen bg-zeat-beige flex items-center pt-16">
         <div className="mx-auto w-full max-w-6xl px-5 sm:px-8 py-16 sm:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -128,7 +129,7 @@ export default async function LandingPage() {
               <h1 className="text-headline-lg sm:text-display text-uber-black mb-5 text-pretty leading-[1.1]">
                 Vos clients commandent.
                 <br />
-                <span className="text-muted-gray">Vous encaissez.</span>
+                <span className="text-body-gray">Vous encaissez.</span>
               </h1>
             </AnimateMount>
 
@@ -160,7 +161,7 @@ export default async function LandingPage() {
             </AnimateMount>
 
             <AnimateMount delay={0.28}>
-              <p className="text-micro text-muted-gray mt-5">
+              <p className="text-micro text-body-gray mt-5">
                 Gratuit. Sans carte bancaire.
                 {count > 0 && (
                   <>
@@ -558,7 +559,7 @@ export default async function LandingPage() {
       <section className="bg-uber-black py-20 sm:py-28 px-5 sm:px-8 text-center">
         <AnimateIn>
         <div className="mx-auto max-w-2xl">
-          <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-4">
+          <p className="text-micro font-semibold text-white/60 uppercase tracking-widest mb-4">
             Rejoignez Zeat
           </p>
           <h2 className="text-headline-md sm:text-headline-lg text-white mb-5 text-pretty">
@@ -601,14 +602,14 @@ export default async function LandingPage() {
               >
                 Zeat
               </Link>
-              <p className="text-micro text-white/40 mt-2 leading-relaxed">
+              <p className="text-micro text-white/60 mt-2 leading-relaxed">
                 Le menu. Distillé.
               </p>
             </div>
 
             {/* Produit */}
             <div>
-              <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-3">
+              <p className="text-micro font-semibold text-white/60 uppercase tracking-widest mb-3">
                 Produit
               </p>
               <ul className="space-y-2">
@@ -631,7 +632,7 @@ export default async function LandingPage() {
 
             {/* Explorer */}
             <div>
-              <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-3">
+              <p className="text-micro font-semibold text-white/60 uppercase tracking-widest mb-3">
                 Explorer
               </p>
               <ul className="space-y-2">
@@ -653,7 +654,7 @@ export default async function LandingPage() {
 
             {/* Ressources */}
             <div>
-              <p className="text-micro font-semibold text-white/40 uppercase tracking-widest mb-3">
+              <p className="text-micro font-semibold text-white/60 uppercase tracking-widest mb-3">
                 Aide
               </p>
               <ul className="space-y-2">
@@ -675,13 +676,14 @@ export default async function LandingPage() {
           </div>
 
           <div className="border-t border-white/8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-micro text-white/30">
+            <p className="text-micro text-white/55">
               © {new Date().getFullYear()} Zeat. Tous droits réservés.
             </p>
-            <p className="text-micro text-white/30">Fait au Bénin</p>
+            <p className="text-micro text-white/55">Fait au Bénin</p>
           </div>
         </div>
       </footer>
+      </main>
     </div>
   );
 }
