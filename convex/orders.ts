@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { api } from "./_generated/api";
 
 export const create = mutation({
   args: {
@@ -19,7 +20,7 @@ export const create = mutation({
     total: v.number(),
   },
   handler: async (ctx, args) => {
-    return ctx.db.insert("orders", {
+    const orderId = await ctx.db.insert("orders", {
       restaurantId: args.restaurantId,
       customerName: args.customerName,
       customerPhone: args.customerPhone,
@@ -29,6 +30,16 @@ export const create = mutation({
       status: "pending",
       createdAt: Date.now(),
     });
+
+    // Fire push notification to restaurant owner (non-blocking)
+    await ctx.scheduler.runAfter(0, api.pushNotifications.sendOrderNotification, {
+      restaurantId: args.restaurantId,
+      customerName: args.customerName,
+      total: args.total,
+      itemCount: args.items.reduce((sum, i) => sum + i.quantity, 0),
+    });
+
+    return orderId;
   },
 });
 

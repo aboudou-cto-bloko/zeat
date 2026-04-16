@@ -1,11 +1,14 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { UtensilsCrossed, ClipboardList, ExternalLink, ArrowRight } from "lucide-react";
+import { UtensilsCrossed, ClipboardList, ExternalLink, ArrowRight, Bell, BellOff } from "lucide-react";
+import { useState, useEffect } from "react";
+import { requestPushPermission } from "@/components/providers/pwa-provider";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
   const restaurant = useQuery(api.restaurants.getCurrent);
@@ -18,8 +21,36 @@ export default function DashboardPage() {
     api.dishes.listByRestaurant,
     restaurant ? { restaurantId: restaurant._id } : "skip"
   );
+  const saveSubscription = useMutation(api.pushSubscriptions.save);
 
   const pendingOrders = orders?.filter((o) => o.status === "pending").length ?? 0;
+
+  const [notifStatus, setNotifStatus] = useState<"unknown" | "granted" | "denied" | "unsupported">("unknown");
+
+  useEffect(() => {
+    if (!("Notification" in window)) { setNotifStatus("unsupported"); return; }
+    setNotifStatus(Notification.permission as "granted" | "denied" | "default" === "granted" ? "granted" : Notification.permission === "denied" ? "denied" : "unknown");
+  }, []);
+
+  async function handleEnableNotifications() {
+    const granted = await requestPushPermission();
+    if (!granted) {
+      setNotifStatus("denied");
+      toast.error("Notifications refusées. Activez-les dans les paramètres de votre navigateur.");
+      return;
+    }
+    setNotifStatus("granted");
+    // Persist subscription to Convex
+    const registration = await navigator.serviceWorker.ready;
+    const sub = await registration.pushManager.getSubscription();
+    if (sub) {
+      const json = sub.toJSON();
+      if (json.endpoint && json.keys?.p256dh && json.keys?.auth) {
+        await saveSubscription({ endpoint: json.endpoint, p256dh: json.keys.p256dh, auth: json.keys.auth });
+      }
+    }
+    toast.success("Notifications activées ! Vous recevrez une alerte à chaque commande.");
+  }
 
   return (
     <div className="flex flex-col">
@@ -101,6 +132,36 @@ export default function DashboardPage() {
             </div>
           </Link>
         </div>
+
+        {/* Push notification opt-in */}
+        {notifStatus === "unknown" && (
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-[var(--radius-lg)] border border-border px-5 sm:px-6 py-4 bg-zeat-beige">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-uber-black">
+                <Bell size={14} className="text-white" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-caption font-semibold text-uber-black">Notifications de commandes</p>
+                <p className="text-micro text-muted-gray mt-0.5">Recevez une alerte push à chaque nouvelle commande</p>
+              </div>
+            </div>
+            <Button
+              onClick={handleEnableNotifications}
+              className="shrink-0 w-full sm:w-auto rounded-full bg-uber-black text-white text-caption font-medium px-5"
+            >
+              Activer
+            </Button>
+          </div>
+        )}
+
+        {notifStatus === "denied" && (
+          <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-border px-5 py-3">
+            <BellOff size={14} className="text-muted-gray shrink-0" aria-hidden="true" />
+            <p className="text-micro text-muted-gray">
+              Notifications désactivées. Activez-les dans les paramètres de votre navigateur.
+            </p>
+          </div>
+        )}
 
         {/* Public link */}
         {restaurant && (

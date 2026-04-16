@@ -83,6 +83,14 @@ export const listAll = query({
   },
 });
 
+// Get restaurant by ID (used internally by push notification action)
+export const getById = query({
+  args: { id: v.id("restaurants") },
+  handler: async (ctx, args) => {
+    return ctx.db.get(args.id);
+  },
+});
+
 // Update restaurant name
 export const update = mutation({
   args: { name: v.string() },

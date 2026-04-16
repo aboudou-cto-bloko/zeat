@@ -37,6 +37,16 @@ export default defineSchema({
     .index("by_restaurant", ["restaurantId"])
     .index("by_category", ["categoryId"]),
 
+  // Push notification subscriptions (one per browser/device per restaurant owner)
+  pushSubscriptions: defineTable({
+    userId: v.id("users"),
+    endpoint: v.string(),
+    p256dh: v.string(),
+    auth: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_endpoint", ["endpoint"]),
+
   // Scope 3 – Orders
   orders: defineTable({
     restaurantId: v.id("restaurants"),

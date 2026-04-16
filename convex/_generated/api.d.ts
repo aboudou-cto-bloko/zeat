@@ -13,8 +13,11 @@ import type * as categories from "../categories.js";
 import type * as dishes from "../dishes.js";
 import type * as http from "../http.js";
 import type * as orders from "../orders.js";
+import type * as pushNotifications from "../pushNotifications.js";
+import type * as pushSubscriptions from "../pushSubscriptions.js";
 import type * as restaurants from "../restaurants.js";
 import type * as search from "../search.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -28,8 +31,11 @@ declare const fullApi: ApiFromModules<{
   dishes: typeof dishes;
   http: typeof http;
   orders: typeof orders;
+  pushNotifications: typeof pushNotifications;
+  pushSubscriptions: typeof pushSubscriptions;
   restaurants: typeof restaurants;
   search: typeof search;
+  users: typeof users;
 }>;
 
 /**

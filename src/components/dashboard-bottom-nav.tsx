@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, UtensilsCrossed, ClipboardList } from "lucide-react";
+import { LayoutDashboard, UtensilsCrossed, ClipboardList, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/dashboard",        label: "Accueil",    icon: LayoutDashboard },
-  { href: "/dashboard/menu",   label: "Menu",       icon: UtensilsCrossed },
-  { href: "/dashboard/orders", label: "Commandes",  icon: ClipboardList   },
+  { href: "/dashboard",          label: "Accueil",    icon: LayoutDashboard },
+  { href: "/dashboard/menu",     label: "Menu",       icon: UtensilsCrossed },
+  { href: "/dashboard/orders",   label: "Commandes",  icon: ClipboardList   },
+  { href: "/dashboard/settings", label: "Paramètres", icon: Settings        },
 ];
 
 export function DashboardBottomNav() {
