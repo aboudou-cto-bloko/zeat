@@ -548,7 +548,7 @@ export default async function LandingPage() {
             <Link href="/m/demo" target="_blank" rel="noopener noreferrer">
               <Button
                 variant="outline"
-                className="rounded-full border-white/20 text-white text-caption font-medium px-7 py-3 h-auto hover:border-white/60 hover:bg-white/5 transition-colors"
+                className="rounded-full bg-transparent border-white/30 text-white text-caption font-medium px-7 py-3 h-auto hover:bg-white/10 hover:border-white/60 hover:text-white transition-colors"
               >
                 Voir un exemple
               </Button>
