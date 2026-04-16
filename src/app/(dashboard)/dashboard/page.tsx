@@ -28,7 +28,7 @@ export default function DashboardPage() {
         description={restaurant?.name}
       />
 
-      <div className="p-4 sm:p-8 space-y-5 sm:space-y-8">
+      <div className="p-4 sm:p-8 space-y-5 sm:space-y-8 animate-fade-in-up">
         {/* Welcome empty state */}
         {categories !== undefined && categories.length === 0 && (
           <div className="card-whisper p-8 sm:p-10 flex flex-col items-center text-center">
@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
         {/* Stats row */}
         {(categories?.length ?? 0) > 0 && (
-          <div className="grid grid-cols-3 gap-3 sm:gap-4">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4 animate-fade-in-up stagger-2">
             <StatCard
               label="Catégories"
               value={categories?.length ?? 0}

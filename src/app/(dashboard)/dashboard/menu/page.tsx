@@ -198,7 +198,7 @@ export default function MenuPage() {
         }
       />
 
-      <div className="p-4 sm:p-8 space-y-3">
+      <div className="p-4 sm:p-8 space-y-3 animate-fade-in-up">
         {categories?.length === 0 && (
           <div className="card-whisper p-8 sm:p-12 text-center">
             <p className="text-body text-muted-gray mb-4">Aucune catégorie pour l&apos;instant.</p>
@@ -243,16 +243,25 @@ export default function MenuPage() {
                 </div>
               </div>
 
-              {/* Dishes list */}
-              {isOpen && (
-                <div className="border-t border-border divide-y divide-border">
+              {/* Dishes list — CSS grid trick for smooth height animation */}
+              <div
+                className="grid transition-[grid-template-rows] duration-[240ms] ease-[cubic-bezier(.645,.045,.355,1)]"
+                style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+              >
+              <div className="overflow-hidden">
+              {/* inner wrapper needed for grid trick */}
+              <div className="border-t border-border divide-y divide-border">
                   {catDishes.length === 0 && (
                     <div className="px-6 py-5 text-center">
                       <p className="text-micro text-muted-gray">Aucun plat dans cette catégorie.</p>
                     </div>
                   )}
-                  {catDishes.map((dish) => (
-                    <div key={dish._id} className="px-4 sm:px-6 py-3 hover:bg-hover-light transition-colors">
+                  {catDishes.map((dish, i) => (
+                    <div
+                      key={dish._id}
+                      className="px-4 sm:px-6 py-3 hover:bg-hover-light transition-[background-color] duration-[150ms] ease animate-fade-in-up"
+                      style={{ animationDelay: `${i * 40}ms` }}
+                    >
                       {/* Mobile: stacked layout */}
                       <div className="flex items-start gap-3">
                         {/* Thumbnail */}
@@ -301,7 +310,8 @@ export default function MenuPage() {
                     </div>
                   ))}
                 </div>
-              )}
+              </div>
+              </div>
             </div>
           );
         })}

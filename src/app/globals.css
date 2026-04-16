@@ -158,11 +158,71 @@
     @apply rounded-full bg-chip-gray px-6 py-3.5 text-uber-black font-medium;
   }
   .card-whisper {
-    @apply bg-pure-white rounded-[var(--radius-lg)] shadow-[var(--shadow-whisper)];
+    @apply bg-pure-white rounded-[var(--radius-lg)] shadow-[var(--shadow-whisper)]
+      transition-[box-shadow,transform] duration-[150ms] ease-[cubic-bezier(.25,.46,.45,.94)];
   }
   .input-zeat {
     @apply rounded-[var(--radius-md)] border border-border bg-white px-4 py-3 text-foreground
       placeholder:text-muted-gray
-      focus:outline-none focus:ring-2 focus:ring-ring/20;
+      focus:outline-none focus:ring-2 focus:ring-ring/20
+      transition-[border-color,box-shadow] duration-[150ms] ease-[cubic-bezier(.25,.46,.45,.94)];
+  }
+}
+
+/* ── Motion tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --ease-out-quart:   cubic-bezier(.165, .84, .44, 1);
+  --ease-out-cubic:   cubic-bezier(.215, .61, .355, 1);
+  --ease-out-quad:    cubic-bezier(.25,  .46, .45, .94);
+  --ease-in-out-cubic:cubic-bezier(.645, .045,.355, 1);
+  --dur-1: 120ms;
+  --dur-2: 180ms;
+  --dur-3: 240ms;
+  --dur-4: 300ms;
+}
+
+/* ── Keyframes ──────────────────────────────────────────────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Animation utilities ────────────────────────────────────────────────────── */
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fade-in-up var(--dur-2) var(--ease-out-quart) both;
+  }
+  .animate-scale-in {
+    animation: scale-in var(--dur-3) var(--ease-out-quart) both;
+  }
+  .animate-fade-in {
+    animation: fade-in var(--dur-2) var(--ease-out-quad) both;
+  }
+  /* Stagger helpers */
+  .stagger-1 { animation-delay: 60ms;  }
+  .stagger-2 { animation-delay: 120ms; }
+  .stagger-3 { animation-delay: 180ms; }
+  .stagger-4 { animation-delay: 240ms; }
+  .stagger-5 { animation-delay: 300ms; }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
