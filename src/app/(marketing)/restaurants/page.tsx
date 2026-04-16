@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import RestaurantsClient from "./restaurants-client";
 
 export const metadata: Metadata = {
-  title: "Explorer les restaurants",
+  title: "Explorer les menus",
   description:
-    "Découvrez tous les restaurants qui utilisent Zeat et passez commande directement depuis leur menu digital.",
+    "Découvrez les restaurants sur Zeat, recherchez vos plats préférés et passez commande directement — sans commission.",
   openGraph: {
-    title: "Explorer les restaurants | Zeat",
+    title: "Explorer les menus | Zeat",
     description:
-      "Découvrez les menus des restaurants sur Zeat et commandez en ligne sans commission.",
+      "Tous les restaurants Zeat en un seul endroit. Recherchez un plat, un restaurant, et commandez sans plateforme.",
   },
 };
 

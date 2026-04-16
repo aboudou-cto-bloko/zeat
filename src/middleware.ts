@@ -7,7 +7,6 @@ import {
 const isPublicRoute = createRouteMatcher([
   "/",
   "/restaurants",
-  "/search",
   "/login",
   "/signup",
   "/m/(.*)",
@@ -15,6 +14,13 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
+  // Redirect /search → /restaurants (merged into one page)
+  if (request.nextUrl.pathname === "/search") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/restaurants";
+    return nextjsMiddlewareRedirect(request, url.toString());
+  }
+
   const isSignedIn = await convexAuth.isAuthenticated();
 
   // Redirect authenticated users away from auth pages
