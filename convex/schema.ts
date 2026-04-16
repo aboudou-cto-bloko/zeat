@@ -11,6 +11,9 @@ export default defineSchema({
     userId: v.id("users"), // from authTables
     name: v.string(),
     slug: v.string(), // unique public URL identifier
+    description: v.optional(v.string()),
+    logoId: v.optional(v.id("_storage")),   // 400×400, circle on storefront
+    bannerId: v.optional(v.id("_storage")), // 1280×400, full-width hero
     createdAt: v.number(),
   })
     .index("by_user", ["userId"])

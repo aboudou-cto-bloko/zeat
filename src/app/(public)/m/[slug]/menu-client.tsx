@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 import { ShoppingCart, Plus, Minus, X, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 type CartItem = {
   dishId: Id<"dishes">;
@@ -145,13 +146,46 @@ export default function MenuClient({
   return (
     <div className="min-h-screen bg-zeat-beige">
       {/* Hero */}
-      <header className="border-b border-black/10 bg-zeat-beige px-6 py-8">
-        <div className="mx-auto max-w-2xl">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-uber-black text-white font-heading text-[20px] font-bold mb-4">
-            {restaurant.name.charAt(0).toUpperCase()}
+      <header className="border-b border-black/10 bg-zeat-beige">
+        {/* Banner */}
+        {restaurant.bannerUrl && (
+          <div className="relative w-full h-[180px] sm:h-[240px] overflow-hidden">
+            <Image
+              src={restaurant.bannerUrl}
+              alt={`Bannière — ${restaurant.name}`}
+              fill
+              sizes="(max-width: 640px) 100vw, 672px"
+              className="object-cover"
+              priority
+            />
+            {/* Gradient overlay so text below stays readable */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-zeat-beige/80" />
           </div>
-          <h1 className="text-headline-md text-uber-black">{restaurant.name}</h1>
-          <p className="text-caption text-muted-gray mt-1">Menu digital</p>
+        )}
+
+        {/* Logo + name */}
+        <div className="mx-auto max-w-2xl px-6 pb-6" style={{ marginTop: restaurant.bannerUrl ? "-2.5rem" : undefined, paddingTop: restaurant.bannerUrl ? undefined : "2rem" }}>
+          {restaurant.logoUrl ? (
+            <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-full overflow-hidden border-4 border-zeat-beige shadow-[var(--shadow-whisper)] mb-4">
+              <Image
+                src={restaurant.logoUrl}
+                alt={`Logo — ${restaurant.name}`}
+                fill
+                sizes="96px"
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-uber-black text-white font-heading text-[22px] sm:text-[26px] font-bold mb-4 border-4 border-zeat-beige">
+              {restaurant.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <h1 className="text-headline-sm sm:text-headline-md text-uber-black">{restaurant.name}</h1>
+          {restaurant.description ? (
+            <p className="text-caption text-muted-gray mt-1">{restaurant.description}</p>
+          ) : (
+            <p className="text-caption text-muted-gray mt-1">Menu digital</p>
+          )}
         </div>
       </header>
 
