@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       .join("");
 
     await resend.emails.send({
-      from: "Zeat <notifications@zeat.app>",
+      from: "Zeat <zeat@pixel-mart-bj.com>",
       to: restaurantEmail,
       subject: `🍽️ Nouvelle commande — ${customerName}`,
       html: `
