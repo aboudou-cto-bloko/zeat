@@ -1,16 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useConvexAuth, useMutation } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { slugify } from "@/lib/utils";
 import { Eye, EyeOff, AlertTriangle } from "lucide-react";
 
 // ── Password strength ──────────────────────────────────────────────────────────
@@ -81,28 +78,11 @@ function PasswordStrength({ password }: { password: string }) {
 
 export default function SignupPage() {
   const { signIn } = useAuthActions();
-  const { isAuthenticated } = useConvexAuth();
-  const createRestaurant = useMutation(api.restaurants.create);
   const router = useRouter();
 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const pendingSetup = useRef<{ name: string; slug: string } | null>(null);
-
-  // Run restaurant creation only once the Convex client confirms auth is ready
-  useEffect(() => {
-    if (!isAuthenticated || !pendingSetup.current) return;
-    const setup = pendingSetup.current;
-    pendingSetup.current = null;
-    createRestaurant(setup)
-      .then(() => router.push("/dashboard"))
-      .catch((err: unknown) => {
-        const message = err instanceof Error ? err.message : "Une erreur est survenue.";
-        toast.error(message);
-        setLoading(false);
-      });
-  }, [isAuthenticated, createRestaurant, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,12 +93,10 @@ export default function SignupPage() {
       await signIn("password", {
         email: form.email,
         password: form.password,
+        restaurantName: form.name,
         flow: "signUp",
       });
-
-      const slug = slugify(form.name) + "-" + Math.random().toString(36).slice(2, 6);
-      pendingSetup.current = { name: form.name, slug };
-      // createRestaurant is called by the useEffect above once isAuthenticated is true
+      router.push("/dashboard");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Une erreur est survenue.";
       toast.error(message.includes("exists") ? "Cet email est déjà utilisé." : message);
