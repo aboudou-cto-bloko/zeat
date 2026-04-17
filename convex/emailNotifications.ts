@@ -1,10 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+"use node";
+
+import { internalAction } from "./_generated/server";
+import { v } from "convex/values";
+import { internal } from "./_generated/api";
 import { Resend } from "resend";
 
-interface OrderItem {
-  dishName: string;
-  quantity: number;
-  unitPrice: number;
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function formatPrice(amount: number): string {
@@ -16,28 +23,24 @@ function formatPrice(amount: number): string {
   }).format(amount);
 }
 
-export async function POST(req: NextRequest) {
-  try {
-    const { restaurantName, customerName, items, total } = await req.json() as {
-      restaurantName: string;
-      customerName: string;
-      items: OrderItem[];
-      total: number;
-    };
-
+export const sendOrderEmail = internalAction({
+  args: { orderId: v.id("orders") },
+  handler: async (ctx, args) => {
+    const resendKey = process.env.RESEND_API_KEY;
     const restaurantEmail = process.env.RESTAURANT_NOTIFICATION_EMAIL;
-    if (!restaurantEmail || !process.env.RESEND_API_KEY) {
-      // Silently skip if not configured (dev / CI)
-      return NextResponse.json({ ok: true });
-    }
+    if (!resendKey || !restaurantEmail) return;
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    const order = await ctx.runQuery(internal.orders.getById, { id: args.orderId });
+    if (!order) return;
 
-    const itemsHtml = items
+    const resend = new Resend(resendKey);
+
+    const customerName = escapeHtml(order.customerName);
+    const itemsHtml = order.items
       .map(
         (i) =>
           `<tr>
-            <td style="padding:8px 0;border-bottom:1px solid #e3e2e2">${i.dishName}</td>
+            <td style="padding:8px 0;border-bottom:1px solid #e3e2e2">${escapeHtml(i.dishName)}</td>
             <td style="padding:8px 0;border-bottom:1px solid #e3e2e2;text-align:center">${i.quantity}</td>
             <td style="padding:8px 0;border-bottom:1px solid #e3e2e2;text-align:right">${formatPrice(i.unitPrice * i.quantity)}</td>
           </tr>`
@@ -47,11 +50,10 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: "Zeat <zeat@pixel-mart-bj.com>",
       to: restaurantEmail,
-      subject: `🍽️ Nouvelle commande — ${customerName}`,
+      subject: `🍽️ Nouvelle commande — ${order.customerName.replace(/[\r\n]/g, " ")}`,
       html: `
         <div style="font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;background:#ffffff">
           <h1 style="font-size:24px;font-weight:700;margin:0 0 4px">Nouvelle commande</h1>
-          <p style="color:#afafaf;font-size:14px;margin:0 0 24px">${restaurantName}</p>
 
           <div style="background:#f5f0eb;border-radius:12px;padding:16px 20px;margin-bottom:24px">
             <p style="margin:0;font-size:14px;font-weight:600">Client : ${customerName}</p>
@@ -70,7 +72,7 @@ export async function POST(req: NextRequest) {
 
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:2px solid #000">
             <span style="font-weight:700;font-size:16px">Total</span>
-            <span style="font-weight:700;font-size:20px">${formatPrice(total)}</span>
+            <span style="font-weight:700;font-size:20px">${formatPrice(order.total)}</span>
           </div>
 
           <p style="color:#afafaf;font-size:12px;margin-top:32px;text-align:center">
@@ -79,11 +81,5 @@ export async function POST(req: NextRequest) {
         </div>
       `,
     });
-
-    return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error("Email notification error:", error);
-    // Don't fail the order if email fails
-    return NextResponse.json({ ok: true });
-  }
-}
+  },
+});
