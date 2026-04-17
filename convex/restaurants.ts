@@ -17,31 +17,6 @@ async function withBrandingUrls<T extends { logoId?: string; bannerId?: string }
 
 // ── Mutations ────────────────────────────────────────────────────────────────
 
-// Create restaurant profile after signup
-export const create = mutation({
-  args: {
-    name: v.string(),
-    slug: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
-
-    const existing = await ctx.db
-      .query("restaurants")
-      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
-      .first();
-    if (existing) throw new Error("SLUG_TAKEN");
-
-    return ctx.db.insert("restaurants", {
-      userId,
-      name: args.name,
-      slug: args.slug,
-      createdAt: Date.now(),
-    });
-  },
-});
-
 // Update restaurant name + description
 export const update = mutation({
   args: { name: v.string(), description: v.optional(v.string()) },
