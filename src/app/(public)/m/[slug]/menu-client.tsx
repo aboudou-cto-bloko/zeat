@@ -234,9 +234,9 @@ export default function MenuClient({
                     return (
                       <div
                         key={dish._id}
-                        className="flex items-center justify-between rounded-[var(--radius-lg)] bg-pure-white px-5 py-4 shadow-[var(--shadow-whisper)]"
+                        className="flex items-center gap-3 rounded-[var(--radius-lg)] bg-pure-white px-5 py-4 shadow-[var(--shadow-whisper)]"
                       >
-                        <div className="flex-1 min-w-0 pr-4">
+                        <div className="flex-1 min-w-0">
                           <p className="text-caption font-semibold text-uber-black">{dish.name}</p>
                           {dish.description && (
                             <p className="text-micro text-muted-gray mt-0.5 line-clamp-2">
@@ -247,6 +247,17 @@ export default function MenuClient({
                             {formatPrice(dish.price)}
                           </p>
                         </div>
+                        {dish.imageUrl && (
+                          <div className="relative h-[72px] w-[72px] shrink-0 rounded-[var(--radius-md)] overflow-hidden">
+                            <Image
+                              src={dish.imageUrl}
+                              alt={dish.name}
+                              fill
+                              sizes="72px"
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
                         <div className="shrink-0">
                           {inCart ? (
                             <div className="flex items-center gap-2">
@@ -314,8 +325,15 @@ export default function MenuClient({
             <SheetTitle className="font-heading text-[20px] font-bold">Mon panier</SheetTitle>
           </SheetHeader>
           <div className="space-y-3">
-            {cart.map((item) => (
-              <div key={item.dishId} className="flex items-center justify-between py-3 border-b border-border">
+            {cart.map((item) => {
+              const imageUrl = dishes?.find((d) => d._id === item.dishId)?.imageUrl ?? null;
+              return (
+              <div key={item.dishId} className="flex items-center gap-3 py-3 border-b border-border">
+                {imageUrl && (
+                  <div className="relative h-12 w-12 shrink-0 rounded-[var(--radius-md)] overflow-hidden">
+                    <Image src={imageUrl} alt={item.dishName} fill sizes="48px" className="object-cover" />
+                  </div>
+                )}
                 <div className="flex-1">
                   <p className="text-caption font-semibold text-uber-black">{item.dishName}</p>
                   <p className="text-micro text-muted-gray">{formatPrice(item.unitPrice)}</p>
@@ -342,7 +360,8 @@ export default function MenuClient({
                   </button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
           <div className="mt-4 flex items-center justify-between py-3 border-t border-border">
             <span className="text-caption font-semibold">Total</span>
