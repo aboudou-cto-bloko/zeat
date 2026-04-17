@@ -231,12 +231,72 @@ export default function MenuClient({
                 <div className="space-y-3">
                   {catDishes.map((dish) => {
                     const inCart = cart.find((i) => i.dishId === dish._id);
+                    const controls = inCart ? (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => updateQty(dish._id, -1)}
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-chip-gray hover:bg-hover-gray transition-colors"
+                        >
+                          <Minus size={13} />
+                        </button>
+                        <span className="text-caption font-bold w-5 text-center">
+                          {inCart.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQty(dish._id, 1)}
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-uber-black text-white hover:bg-body-gray transition-colors"
+                        >
+                          <Plus size={13} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => addToCart(dish)}
+                        className="flex h-9 w-9 items-center justify-center rounded-full bg-uber-black text-white hover:bg-body-gray transition-colors shadow-[var(--shadow-float)]"
+                      >
+                        <Plus size={16} />
+                      </button>
+                    );
+
+                    if (dish.imageUrl) {
+                      return (
+                        <div
+                          key={dish._id}
+                          className="overflow-hidden rounded-[var(--radius-lg)] bg-pure-white shadow-[var(--shadow-whisper)] group"
+                        >
+                          <div className="relative h-44 w-full overflow-hidden">
+                            <Image
+                              src={dish.imageUrl}
+                              alt={dish.name}
+                              fill
+                              sizes="(max-width: 720px) calc(100vw - 48px), 624px"
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          </div>
+                          <div className="flex items-end justify-between px-5 py-4">
+                            <div className="flex-1 min-w-0 pr-4">
+                              <p className="text-caption font-semibold text-uber-black">{dish.name}</p>
+                              {dish.description && (
+                                <p className="text-micro text-muted-gray mt-0.5 line-clamp-2">
+                                  {dish.description}
+                                </p>
+                              )}
+                              <p className="text-caption font-bold text-uber-black mt-2">
+                                {formatPrice(dish.price)}
+                              </p>
+                            </div>
+                            <div className="shrink-0">{controls}</div>
+                          </div>
+                        </div>
+                      );
+                    }
+
                     return (
                       <div
                         key={dish._id}
-                        className="flex items-center gap-3 rounded-[var(--radius-lg)] bg-pure-white px-5 py-4 shadow-[var(--shadow-whisper)]"
+                        className="flex items-center justify-between rounded-[var(--radius-lg)] bg-pure-white px-5 py-4 shadow-[var(--shadow-whisper)]"
                       >
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 pr-4">
                           <p className="text-caption font-semibold text-uber-black">{dish.name}</p>
                           {dish.description && (
                             <p className="text-micro text-muted-gray mt-0.5 line-clamp-2">
@@ -247,45 +307,7 @@ export default function MenuClient({
                             {formatPrice(dish.price)}
                           </p>
                         </div>
-                        {dish.imageUrl && (
-                          <div className="relative h-[72px] w-[72px] shrink-0 rounded-[var(--radius-md)] overflow-hidden">
-                            <Image
-                              src={dish.imageUrl}
-                              alt={dish.name}
-                              fill
-                              sizes="72px"
-                              className="object-cover"
-                            />
-                          </div>
-                        )}
-                        <div className="shrink-0">
-                          {inCart ? (
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => updateQty(dish._id, -1)}
-                                className="flex h-8 w-8 items-center justify-center rounded-full bg-chip-gray hover:bg-hover-gray transition-colors"
-                              >
-                                <Minus size={13} />
-                              </button>
-                              <span className="text-caption font-bold w-5 text-center">
-                                {inCart.quantity}
-                              </span>
-                              <button
-                                onClick={() => updateQty(dish._id, 1)}
-                                className="flex h-8 w-8 items-center justify-center rounded-full bg-uber-black text-white hover:bg-body-gray transition-colors"
-                              >
-                                <Plus size={13} />
-                              </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => addToCart(dish)}
-                              className="flex h-9 w-9 items-center justify-center rounded-full bg-uber-black text-white hover:bg-body-gray transition-colors shadow-[var(--shadow-float)]"
-                            >
-                              <Plus size={16} />
-                            </button>
-                          )}
-                        </div>
+                        <div className="shrink-0">{controls}</div>
                       </div>
                     );
                   })}
