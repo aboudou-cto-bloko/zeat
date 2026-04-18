@@ -100,18 +100,6 @@ export default function MenuClient({
         total,
       });
 
-      // Notify restaurant via API route
-      await fetch("/api/notify-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          restaurantName: restaurant.name,
-          customerName: checkoutForm.name,
-          items: cart,
-          total,
-        }),
-      });
-
       setCart([]);
       setCheckoutOpen(false);
       setCartOpen(false);

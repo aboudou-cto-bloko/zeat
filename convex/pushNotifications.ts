@@ -1,6 +1,6 @@
 "use node";
 
-import { action } from "./_generated/server";
+import { internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
 import webpush from "web-push";
@@ -9,7 +9,7 @@ import webpush from "web-push";
  * sendOrderNotification — sends a Web Push to the restaurant owner.
  * Called via ctx.scheduler.runAfter(0, ...) from the orders.create mutation.
  */
-export const sendOrderNotification = action({
+export const sendOrderNotification = internalAction({
   args: {
     restaurantId: v.id("restaurants"),
     customerName: v.string(),

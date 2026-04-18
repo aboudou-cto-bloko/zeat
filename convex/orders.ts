@@ -1,8 +1,8 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalQuery } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { api } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { requireOwnership } from "./lib";
 
 export const create = mutation({
@@ -22,9 +22,16 @@ export const create = mutation({
     total: v.number(),
   },
   handler: async (ctx, args) => {
+    if (args.items.length === 0) throw new Error("Order must contain at least one item");
+    if (args.customerName.trim().length === 0) throw new Error("Customer name required");
+    if (args.customerName.length > 100) throw new Error("Customer name too long");
+    if (args.note && args.note.length > 500) throw new Error("Note too long");
+
     // Recompute prices server-side — never trust client-supplied amounts
     const resolvedItems = await Promise.all(
       args.items.map(async (item) => {
+        if (!Number.isInteger(item.quantity) || item.quantity < 1)
+          throw new Error("Invalid quantity");
         const dish = await ctx.db.get(item.dishId);
         if (!dish || dish.restaurantId !== args.restaurantId)
           throw new Error(`Invalid dish: ${item.dishId}`);
@@ -44,16 +51,24 @@ export const create = mutation({
       createdAt: Date.now(),
     });
 
-    // Fire push notification to restaurant owner (non-blocking)
-    await ctx.scheduler.runAfter(0, api.pushNotifications.sendOrderNotification, {
+    // Fire push + email notifications server-side (non-blocking)
+    await ctx.scheduler.runAfter(0, internal.pushNotifications.sendOrderNotification, {
       restaurantId: args.restaurantId,
       customerName: args.customerName,
-      total: args.total,
-      itemCount: args.items.reduce((sum, i) => sum + i.quantity, 0),
+      total,
+      itemCount: resolvedItems.reduce((sum, i) => sum + i.quantity, 0),
+    });
+    await ctx.scheduler.runAfter(0, internal.emailNotifications.sendOrderEmail, {
+      orderId,
     });
 
     return orderId;
   },
+});
+
+export const getById = internalQuery({
+  args: { id: v.id("orders") },
+  handler: async (ctx, args) => ctx.db.get(args.id),
 });
 
 // Full list (for dashboard stats — just counts pending)

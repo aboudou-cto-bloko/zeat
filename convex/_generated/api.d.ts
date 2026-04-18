@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
 import type * as dishes from "../dishes.js";
+import type * as emailNotifications from "../emailNotifications.js";
 import type * as http from "../http.js";
 import type * as lib from "../lib.js";
 import type * as orders from "../orders.js";
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   categories: typeof categories;
   dishes: typeof dishes;
+  emailNotifications: typeof emailNotifications;
   http: typeof http;
   lib: typeof lib;
   orders: typeof orders;
