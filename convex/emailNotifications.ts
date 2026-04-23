@@ -28,7 +28,10 @@ export const sendOrderEmail = internalAction({
   handler: async (ctx, args) => {
     const resendKey = process.env.RESEND_API_KEY;
     const restaurantEmail = process.env.RESTAURANT_NOTIFICATION_EMAIL;
-    if (!resendKey || !restaurantEmail) return;
+    if (!resendKey || !restaurantEmail) {
+      console.error("Missing RESEND_API_KEY or RESTAURANT_NOTIFICATION_EMAIL");
+      return;
+    }
 
     const order = await ctx.runQuery(internal.orders.getById, { id: args.orderId });
     if (!order) return;

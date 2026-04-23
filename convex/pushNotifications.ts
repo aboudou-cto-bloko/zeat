@@ -21,7 +21,10 @@ export const sendOrderNotification = internalAction({
     const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
     const vapidEmail = process.env.VAPID_EMAIL ?? "mailto:zeat@pixel-mart-bj.com";
 
-    if (!vapidPublic || !vapidPrivate) return;
+    if (!vapidPublic || !vapidPrivate) {
+      console.error("Missing VAPID_PUBLIC_KEY or VAPID_PRIVATE_KEY");
+      return;
+    }
 
     const restaurant = await ctx.runQuery(api.restaurants.getById, {
       id: args.restaurantId,
