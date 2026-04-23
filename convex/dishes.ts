@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { ConvexError } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { requireOwnership } from "./lib";
 
@@ -62,7 +63,7 @@ export const generateUploadUrl = mutation({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throw new ConvexError("Authentication required");
     return ctx.storage.generateUploadUrl();
   },
 });
@@ -79,7 +80,7 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throw new ConvexError("Authentication required");
 
     const restaurant = await ctx.db
       .query("restaurants")
@@ -124,7 +125,7 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throw new ConvexError("Authentication required");
 
     const dish = await ctx.db.get(args.id);
     if (!dish) throw new Error("Dish not found");
@@ -160,7 +161,7 @@ export const remove = mutation({
   args: { id: v.id("dishes") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) throw new ConvexError("Authentication required");
 
     const dish = await ctx.db.get(args.id);
     if (!dish) return;
