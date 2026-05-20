@@ -206,6 +206,7 @@ export default async function LandingPage() {
                     height={628}
                     className="w-full object-cover object-top"
                     priority
+                    unoptimized
                   />
                 </div>
               </div>
